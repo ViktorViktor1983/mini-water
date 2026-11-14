@@ -10,7 +10,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def start(message):
     # Создаем кнопку, которая открывает нашу страницу по IP и порту
     markup = InlineKeyboardMarkup()
-    web_app = WebAppInfo(url="http://79.236.147.116:8091")
+    web_app = WebAppInfo(url="https://assign-jackson-clan-basename.trycloudflare.com")
     markup.add(InlineKeyboardButton("🎴 Открыть покер", web_app=web_app))
     
     bot.send_message(message.chat.id, "Привет! Нажми на кнопку ниже, чтобы запустить тестовое приложение:", reply_markup=markup)
