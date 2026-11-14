@@ -3,7 +3,7 @@ import telebot
 from telebot.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 # Вставь сюда токен ТВОЕГО НОВОГО тестового бота (который ты создавал в BotFather)
-BOT_TOKEN = "СЮДА_ВСТАВЬ_ТОКЕН"
+BOT_TOKEN = "9058528898:AAGEWivjXOBfFA_Uvx3-Kf4EtvwlxtiGwwU"
 bot = telebot.TeleBot(BOT_TOKEN)
 
 @bot.message_handler(commands=['start'])
