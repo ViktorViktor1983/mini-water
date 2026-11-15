@@ -14,6 +14,10 @@
             --panel-bg: #222222;
             --btn-bg: #444444;
             --btn-active: #ff9800;
+            
+            /* Цвета статусов */
+            --status-green: #4caf50; /* В игре */
+            --status-red: #d32f2f;   /* Место пустое */
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
@@ -45,58 +49,63 @@
             overflow: hidden; 
         }
 
+        /* Игроки */
         .player-seat, .seat-me { 
             position: absolute; 
-            width: 40px; height: 40px; 
-            background-color: rgba(0, 0, 0, 0.7); 
-            border-radius: 50%; border: 2px solid #fff; 
+            width: 44px; height: 44px; 
+            background-color: rgba(0, 0, 0, 0.8); 
+            border-radius: 50%; 
+            border: 3px solid var(--status-green); /* По умолчанию все зеленые */
             display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: bold; color: #ccc; 
+            font-size: 10px; font-weight: bold; color: #fff; 
             transform: translate(-50%, -50%); 
             z-index: 10;
-        }
-
-        /* Борд (5 карт) */
-        .board { 
-            display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            transition: border-color 0.3s;
         }
         
-        /* Общий стиль для карт и слотов */
-        .card, .board-slot { 
-            width: 40px; height: 60px; 
-            background-color: var(--card-bg); 
-            border-radius: 6px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 18px; font-weight: bold; 
-            color: var(--card-text-black); 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.6); 
+        /* Силуэт человека */
+        .avatar {
+            width: 24px; height: 24px;
+            background-color: #666;
+            border-radius: 50% 50% 0 0;
+            position: relative;
+            margin-top: 4px;
         }
+        .avatar::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: 6px;
+            width: 12px; height: 12px;
+            background-color: #666;
+            border-radius: 50%;
+        }
+
+        .player-name {
+            position: absolute;
+            bottom: -18px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        /* Борд */
+        .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
+        .card, .board-slot { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
-
-        /* Слоты для пустых карт */
-        .board-slot {
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 2px dashed #777;
-            color: #777;
-            cursor: pointer;
-            box-shadow: none;
-        }
         
-        /* Разделитель (промежуток между 3-й и 4-й картой) */
+        /* Слоты борда */
+        .board-slot { background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; cursor: pointer; box-shadow: none; }
+        /* Правило 1: При заполнении убираем серый фон */
+        .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
+        .board-slot.filled.red { color: var(--card-text-red); }
+        
         .separator { width: 10px; }
 
         /* Мои карты */
-        .my-cards { 
-            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); 
-            display: flex; gap: 10px; z-index: 15;
-        }
-        .my-card-slot {
-            width: 45px; height: 65px;
-            background-color: #333; border: 2px dashed #777; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: #777; cursor: pointer;
-            transition: background 0.2s;
-        }
+        .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; }
+        .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s; }
         .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .my-card-slot.filled.red { color: var(--card-text-red); }
 
@@ -120,20 +129,12 @@
         .input-panel.active { bottom: 0; }
 
         .row { display: flex; gap: 5px; justify-content: center; }
-        .input-btn {
-            flex: 1; padding: 15px 0;
-            background-color: var(--btn-bg); border: none; border-radius: 8px;
-            color: white; font-size: 18px; font-weight: bold; cursor: pointer;
-        }
+        .input-btn { flex: 1; padding: 15px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
         .input-btn:active { background-color: var(--btn-active); color: black; }
         
         .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
         .suits-row.active { display: flex; }
-        .suit-btn {
-            flex: 1; padding: 20px 0;
-            background-color: var(--btn-bg); border: none; border-radius: 8px;
-            color: white; font-size: 24px; cursor: pointer;
-        }
+        .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
         .suit-btn:active { background-color: var(--btn-active); color: black; }
     </style>
 </head>
@@ -149,33 +150,51 @@
 
     <div class="table-container">
         <div class="table-area" id="table-area">
-            <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">Вы</div>
             
-            <!-- Мои карты -->
             <div class="my-cards">
-                <div class="my-card-slot" id="slot-1" onclick="openInput(1)">?</div>
-                <div class="my-card-slot" id="slot-2" onclick="openInput(2)">?</div>
+                <div class="my-card-slot" id="slot-1">?</div>
+                <div class="my-card-slot" id="slot-2">?</div>
             </div>
 
-            <!-- Борд (5 мест + разделитель) -->
             <div class="board">
-                <div class="board-slot" id="board-1" onclick="openBoardInput(1)">?</div>
-                <div class="board-slot" id="board-2" onclick="openBoardInput(2)">?</div>
-                <div class="board-slot" id="board-3" onclick="openBoardInput(3)">?</div>
+                <div class="board-slot" id="board-1">?</div>
+                <div class="board-slot" id="board-2">?</div>
+                <div class="board-slot" id="board-3">?</div>
                 <div class="separator"></div>
-                <div class="board-slot" id="board-4" onclick="openBoardInput(4)">?</div>
-                <div class="board-slot" id="board-5" onclick="openBoardInput(5)">?</div>
+                <div class="board-slot" id="board-4">?</div>
+                <div class="board-slot" id="board-5">?</div>
             </div>
 
-            <!-- Игроки -->
-            <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">P1</div>
-            <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">P2</div>
-            <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">P3</div>
-            <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">P4</div>
-            <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">P5</div>
-            <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">P6</div>
-            <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">P7</div>
-            <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">P8</div>
+            <!-- Игроки (все зеленые по умолчанию) -->
+            <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
+                <div class="avatar"></div><div class="player-name">P1</div>
+            </div>
+            <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
+                <div class="avatar"></div><div class="player-name">P2</div>
+            </div>
+            <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
+                <div class="avatar"></div><div class="player-name">P3</div>
+            </div>
+            <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
+                <div class="avatar"></div><div class="player-name">P4</div>
+            </div>
+            <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
+                <div class="avatar"></div><div class="player-name">P5</div>
+            </div>
+            <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
+                <div class="avatar"></div><div class="player-name">P6</div>
+            </div>
+            <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
+                <div class="avatar"></div><div class="player-name">P7</div>
+            </div>
+            <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
+                <div class="avatar"></div><div class="player-name">P8</div>
+            </div>
+
+            <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
+                <div class="avatar"></div><div class="player-name">Вы</div>
+            </div>
+
         </div>
     </div>
 
@@ -183,7 +202,6 @@
         <div class="advice-text">Ожидание хода...</div>
     </div>
 
-    <!-- Панель ввода -->
     <div class="input-panel" id="input-panel">
         <button class="close-btn" onclick="closeInput()" style="background:#d32f2f; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">Отмена</button>
         
@@ -218,37 +236,34 @@
     </div>
 
     <script>
-        let currentTarget = null; // id элемента (слот или борд)
+        let currentTargetId = null;
         let currentRank = "";
         let longPressTimer = null;
+        let isLongPress = false;
 
-        // Долгое нажатие для очистки
-        const clearableElements = document.querySelectorAll('.my-card-slot, .board-slot');
-        clearableElements.forEach(el => {
+        // --- ЛОГИКА КАРТ ---
+        const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
+        cardElements.forEach(el => {
             el.addEventListener('touchstart', (e) => {
+                isLongPress = false;
                 longPressTimer = setTimeout(() => {
+                    isLongPress = true;
                     el.innerText = "?";
                     el.classList.remove("filled", "red");
-                    el.style.backgroundColor = "rgba(0, 0, 0, 0.3)"; // Возвращаем стиль для борда
+                    if (el.classList.contains('board-slot')) {
+                        el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+                    }
                 }, 500);
             });
-            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+                if (!isLongPress) openInput(el.id);
+            });
             el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
         });
 
-        // Открытие панели для МОИХ карт
-        function openInput(slot) {
-            currentTarget = "slot-" + slot;
-            showPanel();
-        }
-
-        // Открытие панели для БОРДА
-        function openBoardInput(slot) {
-            currentTarget = "board-" + slot;
-            showPanel();
-        }
-
-        function showPanel() {
+        function openInput(id) {
+            currentTargetId = id;
             document.getElementById('ranks-view').style.display = 'block';
             document.getElementById('suits-view').classList.remove('active');
             document.getElementById('input-panel').classList.add('active');
@@ -265,26 +280,61 @@
         }
 
         function selectSuit(suit) {
-            let el = document.getElementById(currentTarget);
-            
-            // Если это мой слот карт
-            if (currentTarget.startsWith("slot-")) {
-                el.innerText = currentRank + suit;
-                el.classList.add("filled");
-                if (suit === '♥' || suit === '♦') el.classList.add("red");
-                else el.classList.remove("red");
-            } 
-            // Если это карта борда
-            else {
-                el.innerText = currentRank + suit;
-                el.classList.add("filled");
-                el.style.backgroundColor = "var(--card-bg)"; // Делаем фон белым
-                if (suit === '♥' || suit === '♦') el.classList.add("red");
-                else el.classList.remove("red");
+            let newCardValue = currentRank + suit;
+            let isDuplicate = false;
+
+            // Правило 2: Проверка на дубликаты
+            cardElements.forEach(el => {
+                if (el.id !== currentTargetId && el.innerText === newCardValue) {
+                    isDuplicate = true;
+                }
+            });
+
+            if (isDuplicate) {
+                alert("Такая карта уже есть на столе или у тебя в руке!");
+                return;
             }
+
+            let el = document.getElementById(currentTargetId);
+            el.innerText = newCardValue;
+            el.classList.add("filled");
+            
+            // Правило 1: Правильный цвет для борда
+            if (el.classList.contains('board-slot')) {
+                el.style.backgroundColor = "var(--card-bg)";
+            }
+
+            if (suit === '♥' || suit === '♦') el.classList.add("red");
+            else el.classList.remove("red");
 
             closeInput();
         }
+
+        // --- ЛОГИКА ИГРОКОВ ---
+        const seats = document.querySelectorAll('.player-seat, .seat-me');
+        seats.forEach(seat => {
+            let pressTimer = null;
+            let isSeatLongPress = false;
+
+            seat.addEventListener('touchstart', (e) => {
+                isSeatLongPress = false;
+                pressTimer = setTimeout(() => {
+                    isSeatLongPress = true;
+                    // Долгое нажатие: Красный (место пустое)
+                    seat.style.borderColor = 'var(--status-red)';
+                }, 500);
+            });
+
+            seat.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+                if (!isSeatLongPress) {
+                    // Короткое нажатие: Зеленый (в игре)
+                    seat.style.borderColor = 'var(--status-green)';
+                }
+            });
+
+            seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
+        });
     </script>
 </body>
-</html>
+                    </html>
