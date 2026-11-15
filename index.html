@@ -15,12 +15,18 @@
     </div>
 
     <div class="table-area">
-        <!-- Места для игроков (пока пустые кружки) -->
-        <div class="player-seat seat-top">P1</div>
-        <div class="player-seat seat-left">P2</div>
-        <div class="player-seat seat-right">P3</div>
-        <div class="player-seat seat-bottom">Вы</div>
+        <!-- 9 мест для игроков -->
+        <div class="player-seat seat-1">P1</div>
+        <div class="player-seat seat-2">P2</div>
+        <div class="player-seat seat-3">P3</div>
+        <div class="player-seat seat-4">P4</div>
+        <div class="player-seat seat-5">Вы</div>
+        <div class="player-seat seat-6">P6</div>
+        <div class="player-seat seat-7">P7</div>
+        <div class="player-seat seat-8">P8</div>
+        <div class="player-seat seat-9">P9</div>
 
+        <!-- Карты на столе (пока заглушка) -->
         <div class="board" id="board">
             <div class="card red">A♥</div>
             <div class="card red">K♦</div>
@@ -28,17 +34,11 @@
         </div>
     </div>
 
+    <!-- Нижняя панель скрыта стилями (display: none) -->
     <div class="input-area">
-        <div class="grid-13x13" id="matrix">
-            <!-- Заглушка для визуализации сетки -->
-            <div class="grid-cell">AA</div>
-        </div>
-        <div class="buttons-row">
-            <button class="primary">Сделать ход</button>
-            <button>Новая раздача</button>
-        </div>
+        <div class="grid-13x13" id="matrix"></div>
     </div>
 
     <script src="app.js"></script>
 </body>
-</html>
+                                              </html>
