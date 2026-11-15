@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Poker Bot</title>
+    <title>Poker Bot Editor</title>
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -30,12 +30,10 @@
             border-radius: 100px; 
             border: 6px solid #4a2c12; 
             position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
             overflow: hidden; 
         }
 
+        /* Игроки теперь двигаются */
         .player-seat { 
             position: absolute; 
             width: 40px; height: 40px; 
@@ -43,8 +41,13 @@
             border-radius: 50%; border: 2px solid #fff; 
             display: flex; align-items: center; justify-content: center; 
             font-size: 12px; font-weight: bold; color: #ccc; 
-            transform: translate(-50%, -50%); z-index: 10;
+            transform: translate(-50%, -50%); 
+            z-index: 10;
+            cursor: grab; /* Показываем, что можно тащить */
         }
+        .player-seat:active { cursor: grabbing; border-color: #ff9800; }
+
+        /* Карты и остальное (пока без изменений) */
         .seat-me { 
             position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); 
             width: 40px; height: 40px; 
@@ -52,8 +55,7 @@
             display: flex; align-items: center; justify-content: center; 
             font-size: 12px; font-weight: bold; color: #ccc; z-index: 10;
         }
-
-        .board { display: flex; gap: 8px; z-index: 2; margin-top: -40px; }
+        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); }
         .card { width: 45px; height: 65px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
 
@@ -63,45 +65,17 @@
         }
         .my-card-slot {
             width: 45px; height: 65px;
-            background-color: #333;
-            border: 2px dashed #777;
-            border-radius: 6px;
+            background-color: #333; border: 2px dashed #777; border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
             font-size: 20px; color: #777; cursor: pointer;
         }
-        .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
-        .my-card-slot.filled.red { color: var(--card-text-red); }
 
         .control-panel {
-            flex: 1;
-            background-color: var(--panel-bg);
+            flex: 1; background-color: var(--panel-bg);
             border-top-left-radius: 15px; border-top-right-radius: 15px;
             padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
-
-        .matrix-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: none;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .matrix-overlay.active { display: flex; }
-        .matrix-grid {
-            display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; width: 100%; aspect-ratio: 1/1; margin-top: 20px;
-        }
-        .matrix-cell {
-            background-color: #333; border-radius: 3px; display: flex; align-items: center; justify-content: center;
-            font-size: 9px; color: #aaa; cursor: pointer;
-        }
-        .matrix-cell:active { background-color: #ff9800; color: black; }
-        
-        .close-matrix { 
-            align-self: flex-end; background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; 
-        }
     </style>
 </head>
 <body>
@@ -112,93 +86,93 @@
             <span>Быстрый</span>
         </div>
         <span>Раздача #1</span>
-        <span style="visibility: hidden;">Пот: 3 BB</span>
     </div>
 
     <div class="table-area" id="table-area">
-        <div class="player-seat seat-me">Вы</div>
+        <!-- Точка отсчета (для тебя) -->
+        <div class="seat-me" style="pointer-events: none;">Вы</div>
         
-        <div class="my-cards" id="my-cards">
-            <div class="my-card-slot" id="slot-1" onclick="openMatrix(1)">?</div>
-            <div class="my-card-slot" id="slot-2" onclick="openMatrix(2)">?</div>
+        <!-- Твои карты (тоже заблокированы для перетаскивания) -->
+        <div class="my-cards" style="pointer-events: none;">
+            <div class="my-card-slot">?</div>
+            <div class="my-card-slot">?</div>
         </div>
 
-        <div class="board" id="board">
+        <!-- Общие карты (заблокированы) -->
+        <div class="board" style="pointer-events: none;">
             <div class="card red">A♥</div>
             <div class="card red">K♦</div>
             <div class="card">7♣</div>
         </div>
+
+        <!-- А вот этих ребят можно двигать! -->
+        <div class="player-seat" id="p1" style="left: 50%; top: 15%;">P1</div>
+        <div class="player-seat" id="p2" style="left: 80%; top: 35%;">P2</div>
+        <div class="player-seat" id="p3" style="left: 80%; top: 60%;">P3</div>
+        <div class="player-seat" id="p4" style="left: 65%; top: 80%;">P4</div>
+        <div class="player-seat" id="p5" style="left: 35%; top: 80%;">P5</div>
+        <div class="player-seat" id="p6" style="left: 20%; top: 60%;">P6</div>
+        <div class="player-seat" id="p7" style="left: 20%; top: 35%;">P7</div>
+        <div class="player-seat" id="p8" style="left: 35%; top: 15%;">P8</div>
+        <div class="player-seat" id="p9" style="left: 50%; top: 65%;">P9</div>
     </div>
 
     <div class="control-panel">
-        <div class="advice-text" id="advice-output">Ожидание хода...</div>
-    </div>
-
-    <div class="matrix-overlay" id="matrix-overlay">
-        <button class="close-matrix" onclick="closeMatrix()">Закрыть</button>
-        <div class="matrix-grid" id="matrix-grid"></div>
+        <button onclick="saveCoords()" style="background:#4caf50; color:white; padding: 15px 30px; border:none; border-radius:10px; font-size: 18px; font-weight:bold;">СОХРАНИТЬ КООРДИНАТЫ</button>
+        <div class="advice-text" id="coords-output" style="font-size: 12px; color: #888; margin-top: 10px; font-family: monospace; word-break: break-all;">Двигай кружки...</div>
     </div>
 
     <script>
-        // Встроенный JS
         document.addEventListener("DOMContentLoaded", () => {
-            const table = document.getElementById("table-area");
-            const overlay = document.getElementById("matrix-overlay");
-            const grid = document.getElementById("matrix-grid");
+            // Логика перетаскивания (Drag and Drop)
+            const seats = document.querySelectorAll('.player-seat');
+            let activeSeat = null;
+            let initialX, initialY;
 
-            // 1. Игроки
-            const totalSeats = 9;
-            const radiusX = 40, radiusY = 40, startAngle = -90;
-            for (let i = 1; i < totalSeats; i++) {
-                let angle = startAngle + i * (360 / totalSeats);
-                let rad = angle * (Math.PI / 180);
-                let x = 50 + radiusX * Math.cos(rad);
-                let y = 50 + radiusY * Math.sin(rad);
-                let seat = document.createElement("div");
-                seat.className = "player-seat";
-                seat.innerText = "P" + i;
-                seat.style.left = x + "%";
-                seat.style.top = y + "%";
-                table.appendChild(seat);
-            }
+            seats.forEach(seat => {
+                // Для тач-экранов (телефон)
+                seat.addEventListener('touchstart', (e) => {
+                    activeSeat = seat;
+                    const touch = e.touches[0];
+                    const rect = seat.getBoundingClientRect();
+                    initialX = touch.clientX - rect.left;
+                    initialY = touch.clientY - rect.top;
+                }, {passive: false});
 
-            // 2. Матрица
-            const ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
-            ranks.forEach((rowRank, i) => {
-                ranks.forEach((colRank, j) => {
-                    let cell = document.createElement("div");
-                    cell.className = "matrix-cell";
-                    let text = (i === j) ? rowRank + colRank : (i < j ? rowRank + colRank + "s" : colRank + rowRank + "o");
-                    cell.innerText = text;
-                    cell.onclick = () => selectCard(text);
-                    grid.appendChild(cell);
+                seat.addEventListener('touchmove', (e) => {
+                    if (!activeSeat) return;
+                    e.preventDefault(); // Останавливаем скролл страницы
+                    const touch = e.touches[0];
+                    const table = document.getElementById('table-area');
+                    const tableRect = table.getBoundingClientRect();
+
+                    // Вычисляем новые координаты в процентах
+                    let newX = touch.clientX - tableRect.left - initialX + (seat.offsetWidth / 2);
+                    let newY = touch.clientY - tableRect.top - initialY + (seat.offsetHeight / 2);
+
+                    // Переводим в проценты от размера стола
+                    let percentX = (newX / tableRect.width) * 100;
+                    let percentY = (newY / tableRect.height) * 100;
+
+                    seat.style.left = percentX + '%';
+                    seat.style.top = percentY + '%';
+                }, {passive: false});
+
+                seat.addEventListener('touchend', () => {
+                    activeSeat = null;
                 });
             });
         });
 
-        let currentSlot = 1;
-        function openMatrix(slot) {
-            currentSlot = slot;
-            document.getElementById("matrix-overlay").classList.add("active");
-        }
-        function closeMatrix() {
-            document.getElementById("matrix-overlay").classList.remove("active");
-        }
-        function selectCard(hand) {
-            let isSuited = hand.includes("s");
-            let rank1 = hand[0];
-            let rank2 = hand[1];
-            
-            let slot = document.getElementById("slot-" + currentSlot);
-            slot.innerText = rank1 + (isSuited ? "♠" : "♣"); // Пока условно
-            slot.classList.add("filled");
-            
-            if (currentSlot === 1) {
-                openMatrix(2); // Автоматически открываем второй слот
-            } else {
-                closeMatrix();
-            }
+        function saveCoords() {
+            const seats = document.querySelectorAll('.player-seat');
+            let result = "";
+            seats.forEach(seat => {
+                result += seat.id + ": left: " + parseFloat(seat.style.left).toFixed(1) + "%, top: " + parseFloat(seat.style.top).toFixed(1) + "%;\n";
+            });
+            document.getElementById('coords-output').innerText = result;
+            document.getElementById('coords-output').style.color = "#4caf50";
         }
     </script>
 </body>
-    </html>
+                </html>
