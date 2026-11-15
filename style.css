@@ -20,7 +20,7 @@
 
 html, body {
     height: 100%;
-    overflow: hidden; /* Убираем прокрутку */
+    overflow: hidden; /* Убираем прокрутку страницы */
     background-color: var(--bg-color);
     color: white;
 }
@@ -156,4 +156,4 @@ button {
 button.primary {
     background-color: var(--accent-color);
     color: #000;
-           }
+    }
