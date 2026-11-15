@@ -23,7 +23,6 @@
         .mode-switch span { padding: 2px 8px; color: #888; cursor: pointer; }
         .mode-switch span.active { background: #333; color: white; }
 
-        /* Контейнер, который центрирует стол */
         .table-container {
             flex: 1;
             display: flex;
@@ -32,19 +31,18 @@
             padding: 10px;
         }
 
-        /* Сам стол с жестким соотношением сторон 3:4 */
+        /* Меняем пропорцию на 4:5 (вытянутый) */
         .table-area { 
             width: 100%;
-            max-width: 60vh; /* Чтобы не вылезал за высоту экрана */
-            aspect-ratio: 3 / 4; /* Жесткая пропорция */
+            max-width: 65vh; 
+            aspect-ratio: 4 / 5; 
             background-color: var(--table-color); 
-            border-radius: 100px; 
+            border-radius: 80px; 
             border: 6px solid #4a2c12; 
             position: relative; 
             overflow: hidden; 
         }
 
-        /* Игроки */
         .player-seat { 
             position: absolute; 
             width: 40px; height: 40px; 
@@ -99,7 +97,6 @@
         <span>Раздача #1</span>
     </div>
 
-    <!-- Контейнер для центрирования -->
     <div class="table-container">
         <div class="table-area" id="table-area">
             <div class="seat-me" style="pointer-events: none;">Вы</div>
@@ -161,7 +158,6 @@
                     let percentX = (newX / tableRect.width) * 100;
                     let percentY = (newY / tableRect.height) * 100;
 
-                    // Ограничиваем, чтобы не вылезали за края
                     percentX = Math.max(5, Math.min(95, percentX));
                     percentY = Math.max(5, Math.min(95, percentY));
 
@@ -186,4 +182,4 @@
         }
     </script>
 </body>
-                </html>
+</html>
