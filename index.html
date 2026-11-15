@@ -11,81 +11,128 @@
             --card-bg: #ffffff;
             --card-text-black: #000000;
             --card-text-red: #d32f2f;
+            --panel-bg: #222222;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         
-        .top-bar { display: flex; justify-content: space-between; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; }
+        /* Верхняя панель */
+        .top-bar { display: flex; justify-content: space-between; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; position: relative; z-index: 20;}
         
+        /* Переключатель режимов слева */
+        .mode-switch { position: absolute; left: 15px; top: 8px; display: flex; background: #111; border-radius: 5px; overflow: hidden; font-size: 12px;}
+        .mode-switch span { padding: 2px 8px; color: #888; cursor: pointer; }
+        .mode-switch span.active { background: #333; color: white; }
+
+        /* Стол занимает 80% высоты */
         .table-area { 
-            flex: 1; 
+            height: 80vh; /* Фиксированная высота */
             background-color: var(--table-color); 
-            margin: 10px; 
+            margin: 5px 10px; 
             border-radius: 100px; 
             border: 6px solid #4a2c12; 
             position: relative; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            overflow: hidden; /* Важно, чтобы игроки не вылезали за стол */
+            overflow: hidden; 
         }
 
-        /* Кружки игроков теперь будут позиционироваться из JS */
+        /* Кружки игроков */
         .player-seat { 
             position: absolute; 
-            width: 45px; 
-            height: 45px; 
+            width: 40px; height: 40px; 
             background-color: rgba(0, 0, 0, 0.7); 
-            border-radius: 50%; 
-            border: 2px solid #fff; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 12px; 
-            font-weight: bold; 
-            color: #ccc; 
-            transform: translate(-50%, -50%); /* Центрируем относительно координаты */
-            z-index: 10;
+            border-radius: 50%; border: 2px solid #fff; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; font-weight: bold; color: #ccc; 
+            transform: translate(-50%, -50%); z-index: 10;
         }
-
-        /* Место "Вы" (всегда внизу) */
         .seat-me { 
-            position: absolute; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 45px; 
-            height: 45px; 
-            background-color: rgba(0, 0, 0, 0.7); 
-            border-radius: 50%; 
-            border: 2px solid #fff; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 12px; 
-            font-weight: bold; 
-            color: #ccc; 
-            z-index: 10;
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); 
+            width: 40px; height: 40px; 
+            background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; border: 2px solid #fff; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; font-weight: bold; color: #ccc; z-index: 10;
         }
 
-        .board { display: flex; gap: 8px; z-index: 2; }
-        .card { width: 50px; height: 75px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
+        /* Карты на столе (борд) */
+        .board { display: flex; gap: 8px; z-index: 2; margin-top: -40px; }
+        .card { width: 45px; height: 65px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
+
+        /* Мои карты (внизу стола) */
+        .my-cards { 
+            position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); 
+            display: flex; gap: 10px; z-index: 15; 
+        }
+        .my-card-slot {
+            width: 45px; height: 65px;
+            background-color: #333;
+            border: 2px dashed #777;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: #777; cursor: pointer;
+        }
+        .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
+        .my-card-slot.filled.red { color: var(--card-text-red); }
+
+        /* Нижняя панель для советов */
+        .control-panel {
+            flex: 1;
+            background-color: var(--panel-bg);
+            border-top-left-radius: 15px; border-top-right-radius: 15px;
+            padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
+
+        /* Матрица (скрыта по умолчанию) */
+        .matrix-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: none; /* Скрыто */
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .matrix-overlay.active { display: flex; }
+        .matrix-grid {
+            display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; width: 100%; aspect-ratio: 1/1; margin-top: 20px;
+        }
+        .matrix-cell {
+            background-color: #333; border-radius: 3px; display: flex; align-items: center; justify-content: center;
+            font-size: 9px; color: #aaa; cursor: pointer;
+        }
+        .matrix-cell:active { background-color: #ff9800; color: black; }
+        
+        .close-matrix { 
+            align-self: flex-end; background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; 
+        }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
+        <div class="mode-switch">
+            <span class="active">Профи</span>
+            <span>Быстрый</span>
+        </div>
         <span>Раздача #1</span>
-        <span>Пот: 3 BB</span>
-        <span>Стек: 100 BB</span>
+        <span style="visibility: hidden;">Пот: 3 BB</span> <!-- Сдвиг для симметрии -->
     </div>
 
     <div class="table-area" id="table-area">
-        <!-- Сюда JS будет вставлять игроков по кругу -->
         <div class="player-seat seat-me">Вы</div>
+        
+        <!-- Мои карты -->
+        <div class="my-cards" id="my-cards">
+            <div class="my-card-slot" id="slot-1">?</div>
+            <div class="my-card-slot" id="slot-2">?</div>
+        </div>
 
+        <!-- Общие карты -->
         <div class="board" id="board">
             <div class="card red">A♥</div>
             <div class="card red">K♦</div>
@@ -93,6 +140,18 @@
         </div>
     </div>
 
+    <div class="control-panel">
+        <div class="advice-text" id="advice-output">Ожидание хода...</div>
+    </div>
+
+    <!-- Матрица (появляется при клике на карту) -->
+    <div class="matrix-overlay" id="matrix-overlay">
+        <button class="close-matrix" onclick="document.getElementById('matrix-overlay').classList.remove('active')">Закрыть</button>
+        <div class="matrix-grid" id="matrix-grid">
+            <!-- Сюда JS вставит 169 ячеек -->
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
-</html>
+            </html>
