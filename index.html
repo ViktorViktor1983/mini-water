@@ -49,45 +49,60 @@
             overflow: hidden; 
         }
 
-        /* Игроки */
+        /* Контейнер игрока */
         .player-seat, .seat-me { 
             position: absolute; 
-            width: 44px; height: 44px; 
-            background-color: rgba(0, 0, 0, 0.8); 
-            border-radius: 50%; 
-            border: 3px solid var(--status-green); /* По умолчанию все зеленые */
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 10px; font-weight: bold; color: #fff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
             transform: translate(-50%, -50%); 
             z-index: 10;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            cursor: pointer;
         }
-        
+
+        /* Руки (мини-карты) */
+        .player-cards {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 2px;
+            height: 22px; /* Высота карт */
+        }
+        .mini-card {
+            width: 14px;
+            height: 20px;
+            background-color: #b0b0b0;
+            border: 1px solid #555;
+            border-radius: 2px;
+            /* Рубашка карты (просто полоски или крестик) */
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+        }
+        .player-cards.hidden { visibility: hidden; }
+
         /* Силуэт человека */
         .avatar {
             width: 24px; height: 24px;
-            background-color: #666;
+            background-color: var(--status-green);
             border-radius: 50% 50% 0 0;
             position: relative;
-            margin-top: 4px;
+            transition: background-color 0.3s;
         }
         .avatar::before {
             content: '';
             position: absolute;
             top: -10px; left: 6px;
             width: 12px; height: 12px;
-            background-color: #666;
+            background-color: var(--status-green);
             border-radius: 50%;
+            transition: background-color 0.3s;
         }
 
+        /* Маленькая надпись (полупрозрачная) */
         .player-name {
-            position: absolute;
-            bottom: -18px;
-            background: rgba(0,0,0,0.7);
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-size: 10px;
-            white-space: nowrap;
+            margin-top: 2px;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
         }
 
         /* Борд */
@@ -95,9 +110,7 @@
         .card, .board-slot { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
         
-        /* Слоты борда */
         .board-slot { background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; cursor: pointer; box-shadow: none; }
-        /* Правило 1: При заполнении убираем серый фон */
         .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .board-slot.filled.red { color: var(--card-text-red); }
         
@@ -165,34 +178,52 @@
                 <div class="board-slot" id="board-5">?</div>
             </div>
 
-            <!-- Игроки (все зеленые по умолчанию) -->
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
-                <div class="avatar"></div><div class="player-name">P1</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P1</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
-                <div class="avatar"></div><div class="player-name">P2</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P2</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
-                <div class="avatar"></div><div class="player-name">P3</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P3</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
-                <div class="avatar"></div><div class="player-name">P4</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P4</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
-                <div class="avatar"></div><div class="player-name">P5</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P5</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
-                <div class="avatar"></div><div class="player-name">P6</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P6</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
-                <div class="avatar"></div><div class="player-name">P7</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P7</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
-                <div class="avatar"></div><div class="player-name">P8</div>
+                <div class="player-cards"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="avatar"></div>
+                <div class="player-name">P8</div>
             </div>
 
+            <!-- Вы (без карт, так как свои карты внизу) -->
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
-                <div class="avatar"></div><div class="player-name">Вы</div>
+                <div class="avatar"></div>
+                <div class="player-name">Вы</div>
             </div>
 
         </div>
@@ -283,7 +314,6 @@
             let newCardValue = currentRank + suit;
             let isDuplicate = false;
 
-            // Правило 2: Проверка на дубликаты
             cardElements.forEach(el => {
                 if (el.id !== currentTargetId && el.innerText === newCardValue) {
                     isDuplicate = true;
@@ -291,7 +321,7 @@
             });
 
             if (isDuplicate) {
-                alert("Такая карта уже есть на столе или у тебя в руке!");
+                alert("Такая карта уже есть!");
                 return;
             }
 
@@ -299,7 +329,6 @@
             el.innerText = newCardValue;
             el.classList.add("filled");
             
-            // Правило 1: Правильный цвет для борда
             if (el.classList.contains('board-slot')) {
                 el.style.backgroundColor = "var(--card-bg)";
             }
@@ -320,16 +349,28 @@
                 isSeatLongPress = false;
                 pressTimer = setTimeout(() => {
                     isSeatLongPress = true;
-                    // Долгое нажатие: Красный (место пустое)
-                    seat.style.borderColor = 'var(--status-red)';
+                    
+                    // Долгое нажатие: Красный (фолд) и скрываем карты
+                    let avatar = seat.querySelector('.avatar');
+                    avatar.style.backgroundColor = 'var(--status-red)';
+                    avatar.style.setProperty('--status-green', 'var(--status-red)'); 
+                    
+                    let cards = seat.querySelector('.player-cards');
+                    if (cards) cards.classList.add('hidden');
+                    
                 }, 500);
             });
 
             seat.addEventListener('touchend', () => {
                 clearTimeout(pressTimer);
                 if (!isSeatLongPress) {
-                    // Короткое нажатие: Зеленый (в игре)
-                    seat.style.borderColor = 'var(--status-green)';
+                    // Короткое нажатие: Зеленый (в игре) и показываем карты
+                    let avatar = seat.querySelector('.avatar');
+                    avatar.style.backgroundColor = 'var(--status-green)';
+                    avatar.style.setProperty('--status-green', 'var(--status-green)');
+                    
+                    let cards = seat.querySelector('.player-cards');
+                    if (cards) cards.classList.remove('hidden');
                 }
             });
 
