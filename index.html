@@ -56,9 +56,34 @@
             z-index: 10;
         }
 
-        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
-        .card { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
+        /* Борд (5 карт) */
+        .board { 
+            display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+        }
+        
+        /* Общий стиль для карт и слотов */
+        .card, .board-slot { 
+            width: 40px; height: 60px; 
+            background-color: var(--card-bg); 
+            border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 18px; font-weight: bold; 
+            color: var(--card-text-black); 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6); 
+        }
         .card.red { color: var(--card-text-red); }
+
+        /* Слоты для пустых карт */
+        .board-slot {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px dashed #777;
+            color: #777;
+            cursor: pointer;
+            box-shadow: none;
+        }
+        
+        /* Разделитель (промежуток между 3-й и 4-й картой) */
+        .separator { width: 10px; }
 
         /* Мои карты */
         .my-cards { 
@@ -83,7 +108,7 @@
         }
         .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
 
-        /* Панель ввода (скрыта по умолчанию) */
+        /* Панель ввода */
         .input-panel {
             position: absolute; bottom: -100%; left: 0; width: 100%;
             background-color: var(--panel-bg);
@@ -102,7 +127,6 @@
         }
         .input-btn:active { background-color: var(--btn-active); color: black; }
         
-        /* Масти */
         .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
         .suits-row.active { display: flex; }
         .suit-btn {
@@ -127,18 +151,23 @@
         <div class="table-area" id="table-area">
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">Вы</div>
             
-            <!-- Слоты карт -->
+            <!-- Мои карты -->
             <div class="my-cards">
                 <div class="my-card-slot" id="slot-1" onclick="openInput(1)">?</div>
                 <div class="my-card-slot" id="slot-2" onclick="openInput(2)">?</div>
             </div>
 
+            <!-- Борд (5 мест + разделитель) -->
             <div class="board">
-                <div class="card red">A♥</div>
-                <div class="card red">K♦</div>
-                <div class="card">7♣</div>
+                <div class="board-slot" id="board-1" onclick="openBoardInput(1)">?</div>
+                <div class="board-slot" id="board-2" onclick="openBoardInput(2)">?</div>
+                <div class="board-slot" id="board-3" onclick="openBoardInput(3)">?</div>
+                <div class="separator"></div>
+                <div class="board-slot" id="board-4" onclick="openBoardInput(4)">?</div>
+                <div class="board-slot" id="board-5" onclick="openBoardInput(5)">?</div>
             </div>
 
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">P1</div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">P2</div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">P3</div>
@@ -158,7 +187,6 @@
     <div class="input-panel" id="input-panel">
         <button class="close-btn" onclick="closeInput()" style="background:#d32f2f; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">Отмена</button>
         
-        <!-- Ранги -->
         <div id="ranks-view">
             <div class="row">
                 <button class="input-btn" onclick="selectRank('A')">A</button>
@@ -181,7 +209,6 @@
             </div>
         </div>
 
-        <!-- Масти (появляются после ранга) -->
         <div class="suits-row" id="suits-view">
             <button class="suit-btn" style="color:white;" onclick="selectSuit('♠')">♠</button>
             <button class="suit-btn" style="color:var(--card-text-red);" onclick="selectSuit('♥')">♥</button>
@@ -191,30 +218,37 @@
     </div>
 
     <script>
-        let currentSlot = 1;
+        let currentTarget = null; // id элемента (слот или борд)
         let currentRank = "";
         let longPressTimer = null;
 
-        // Логика долгого нажатия для очистки карт
-        const slots = document.querySelectorAll('.my-card-slot');
-        slots.forEach(slot => {
-            slot.addEventListener('touchstart', (e) => {
+        // Долгое нажатие для очистки
+        const clearableElements = document.querySelectorAll('.my-card-slot, .board-slot');
+        clearableElements.forEach(el => {
+            el.addEventListener('touchstart', (e) => {
                 longPressTimer = setTimeout(() => {
-                    // Очищаем карту
-                    slot.innerText = "?";
-                    slot.classList.remove("filled", "red");
-                }, 500); // 500 мс = 0.5 секунды
+                    el.innerText = "?";
+                    el.classList.remove("filled", "red");
+                    el.style.backgroundColor = "rgba(0, 0, 0, 0.3)"; // Возвращаем стиль для борда
+                }, 500);
             });
-            slot.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-            slot.addEventListener('touchmove', () => {
-                clearTimeout(longPressTimer);
-            });
+            el.addEventListener('touchend', () => clearTimeout(longPressTimer));
+            el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
         });
 
+        // Открытие панели для МОИХ карт
         function openInput(slot) {
-            currentSlot = slot;
+            currentTarget = "slot-" + slot;
+            showPanel();
+        }
+
+        // Открытие панели для БОРДА
+        function openBoardInput(slot) {
+            currentTarget = "board-" + slot;
+            showPanel();
+        }
+
+        function showPanel() {
             document.getElementById('ranks-view').style.display = 'block';
             document.getElementById('suits-view').classList.remove('active');
             document.getElementById('input-panel').classList.add('active');
@@ -231,20 +265,26 @@
         }
 
         function selectSuit(suit) {
-            let slot = document.getElementById("slot-" + currentSlot);
-            let colorClass = (suit === '♥' || suit === '♦') ? 'red' : '';
+            let el = document.getElementById(currentTarget);
             
-            slot.innerText = currentRank + suit;
-            slot.classList.add("filled");
-            if (colorClass) slot.classList.add("red");
-            else slot.classList.remove("red");
+            // Если это мой слот карт
+            if (currentTarget.startsWith("slot-")) {
+                el.innerText = currentRank + suit;
+                el.classList.add("filled");
+                if (suit === '♥' || suit === '♦') el.classList.add("red");
+                else el.classList.remove("red");
+            } 
+            // Если это карта борда
+            else {
+                el.innerText = currentRank + suit;
+                el.classList.add("filled");
+                el.style.backgroundColor = "var(--card-bg)"; // Делаем фон белым
+                if (suit === '♥' || suit === '♦') el.classList.add("red");
+                else el.classList.remove("red");
+            }
 
             closeInput();
-            // Автоматически открываем второй слот, если заполнили первый
-            if (currentSlot === 1) {
-                openInput(2);
-            }
         }
     </script>
 </body>
-                </html>
+</html>
