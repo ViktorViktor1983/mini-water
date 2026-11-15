@@ -44,7 +44,7 @@ body {
     flex: 1;
     background-color: var(--table-color);
     margin: 10px;
-    border-radius: 50% / 25%; /* Более реалистичный овал */
+    border-radius: 50% / 25%;
     border: 6px solid #4a2c12;
     position: relative;
     display: flex;
@@ -52,7 +52,6 @@ body {
     justify-content: center;
 }
 
-/* Кружки игроков */
 .player-seat {
     position: absolute;
     width: 40px;
@@ -69,17 +68,16 @@ body {
 }
 
 /* Точное позиционирование по 9 местам */
-.seat-1 { top: 5%; left: 50%; transform: translateX(-50%); } /* Верх */
+.seat-1 { top: 5%; left: 50%; transform: translateX(-50%); }
 .seat-2 { top: 15%; left: 85%; transform: translate(-50%, 0); }
 .seat-3 { top: 35%; left: 92%; transform: translate(-50%, 0); }
 .seat-4 { top: 60%; left: 85%; transform: translate(-50%, 0); }
-.seat-5 { top: 85%; left: 50%; transform: translateX(-50%); } /* Низ (Вы) */
+.seat-5 { top: 85%; left: 50%; transform: translateX(-50%); }
 .seat-6 { top: 60%; left: 15%; transform: translate(-50%, 0); }
 .seat-7 { top: 35%; left: 8%; transform: translate(-50%, 0); }
 .seat-8 { top: 15%; left: 15%; transform: translate(-50%, 0); }
-.seat-9 { top: 35%; left: 70%; transform: translateX(-50%); } /* Внутренний круг */
+.seat-9 { top: 35%; left: 70%; transform: translateX(-50%); }
 
-/* Карты по центру */
 .board {
     display: flex;
     gap: 8px;
@@ -101,7 +99,6 @@ body {
 }
 .card.red { color: var(--card-text-red); }
 
-/* Прячем нижнюю панель */
 .input-area {
     display: none;
-    }
+         }
