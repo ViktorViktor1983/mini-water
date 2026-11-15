@@ -31,10 +31,9 @@
             padding: 10px;
         }
 
-        /* Пропорция 2:3 (вытянутый, но влезает) */
         .table-area { 
             width: 100%;
-            max-width: 60vh; /* Ограничиваем ширину, чтобы не вылез */
+            max-width: 60vh; 
             max-height: 100%; 
             aspect-ratio: 2 / 3; 
             background-color: var(--table-color); 
@@ -44,7 +43,8 @@
             overflow: hidden; 
         }
 
-        .player-seat { 
+        /* Все игроки теперь двигаются */
+        .player-seat, .seat-me { 
             position: absolute; 
             width: 40px; height: 40px; 
             background-color: rgba(0, 0, 0, 0.7); 
@@ -55,29 +55,21 @@
             z-index: 10;
             cursor: grab;
         }
-        .player-seat:active { cursor: grabbing; border-color: #ff9800; }
+        .player-seat:active, .seat-me:active { cursor: grabbing; border-color: #ff9800; }
 
-        .seat-me { 
-            position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%); 
-            width: 40px; height: 40px; 
-            background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; border: 2px solid #fff; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: bold; color: #ccc; z-index: 10;
-        }
-        
-        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
         .card { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
 
         .my-cards { 
             position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); 
-            display: flex; gap: 10px; z-index: 15; 
+            display: flex; gap: 10px; z-index: 15; pointer-events: none;
         }
         .my-card-slot {
             width: 45px; height: 65px;
             background-color: #333; border: 2px dashed #777; border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: #777; cursor: pointer;
+            font-size: 20px; color: #777;
         }
 
         .control-panel {
@@ -86,7 +78,18 @@
             padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
+        
         .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
+
+        /* Всплывающее окно для координат */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; flex-direction: column; padding: 20px; overflow-y: auto;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #222; padding: 15px; border-radius: 10px; color: #4caf50; font-family: monospace; font-size: 14px; white-space: pre-wrap; margin-top: 20px; }
+        .close-btn { background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; align-self: flex-start; }
     </style>
 </head>
 <body>
@@ -101,20 +104,21 @@
 
     <div class="table-container">
         <div class="table-area" id="table-area">
-            <div class="seat-me" style="pointer-events: none;">Вы</div>
+            <!-- Теперь "Вы" тоже можно двигать -->
+            <div class="seat-me" id="me" style="bottom: 3%; left: 50%; transform: translate(-50%, 50%);">Вы</div>
             
-            <div class="my-cards" style="pointer-events: none;">
+            <div class="my-cards">
                 <div class="my-card-slot">?</div>
                 <div class="my-card-slot">?</div>
             </div>
 
-            <div class="board" style="pointer-events: none;">
+            <div class="board">
                 <div class="card red">A♥</div>
                 <div class="card red">K♦</div>
                 <div class="card">7♣</div>
             </div>
 
-            <!-- Двигай этих ребят -->
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 50%; top: 5%;">P1</div>
             <div class="player-seat" id="p2" style="left: 85%; top: 20%;">P2</div>
             <div class="player-seat" id="p3" style="left: 85%; top: 40%;">P3</div>
@@ -129,58 +133,73 @@
 
     <div class="control-panel">
         <button onclick="saveCoords()" style="background:#4caf50; color:white; padding: 12px 25px; border:none; border-radius:10px; font-size: 16px; font-weight:bold;">СОХРАНИТЬ</button>
-        <div class="advice-text" id="coords-output" style="font-size: 12px; color: #888; margin-top: 10px; font-family: monospace; word-break: break-all;">Двигай кружки...</div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modal">
+        <button class="close-btn" onclick="document.getElementById('modal').classList.remove('active')">Закрыть</button>
+        <div class="modal-content" id="result-text"></div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const seats = document.querySelectorAll('.player-seat');
-            let activeSeat = null;
+            // Двигаем и игроков, и "Вы"
+            const draggables = document.querySelectorAll('.player-seat, .seat-me');
+            let activeElement = null;
             let initialX, initialY;
 
-            seats.forEach(seat => {
-                seat.addEventListener('touchstart', (e) => {
-                    activeSeat = seat;
+            draggables.forEach(el => {
+                el.addEventListener('touchstart', (e) => {
+                    activeElement = el;
                     const touch = e.touches[0];
-                    const rect = seat.getBoundingClientRect();
-                    initialX = touch.clientX - rect.left;
-                    initialY = touch.clientY - rect.top;
+                    const rect = el.getBoundingClientRect();
+                    // Запоминаем смещение пальца относительно центра элемента
+                    initialX = touch.clientX - (rect.left + rect.width / 2);
+                    initialY = touch.clientY - (rect.top + rect.height / 2);
                 }, {passive: false});
 
-                seat.addEventListener('touchmove', (e) => {
-                    if (!activeSeat) return;
+                el.addEventListener('touchmove', (e) => {
+                    if (!activeElement) return;
                     e.preventDefault();
                     const touch = e.touches[0];
                     const table = document.getElementById('table-area');
                     const tableRect = table.getBoundingClientRect();
 
-                    let newX = touch.clientX - tableRect.left - initialX + (seat.offsetWidth / 2);
-                    let newY = touch.clientY - tableRect.top - initialY + (seat.offsetHeight / 2);
+                    // Вычисляем координаты центра пальца в процентах от стола
+                    let newX = touch.clientX - tableRect.left - initialX;
+                    let newY = touch.clientY - tableRect.top - initialY;
 
                     let percentX = (newX / tableRect.width) * 100;
                     let percentY = (newY / tableRect.height) * 100;
 
+                    // Ограничиваем
                     percentX = Math.max(5, Math.min(95, percentX));
                     percentY = Math.max(5, Math.min(95, percentY));
 
-                    seat.style.left = percentX + '%';
-                    seat.style.top = percentY + '%';
+                    activeElement.style.left = percentX + '%';
+                    activeElement.style.top = percentY + '%';
+                    // Сбрасываем старые стили (bottom, transform), если они были у "Вы"
+                    activeElement.style.bottom = 'auto';
+                    activeElement.style.transform = 'translate(-50%, -50%)';
                 }, {passive: false});
 
-                seat.addEventListener('touchend', () => {
-                    activeSeat = null;
+                el.addEventListener('touchend', () => {
+                    activeElement = null;
                 });
             });
         });
 
         function saveCoords() {
-            const seats = document.querySelectorAll('.player-seat');
+            const elements = document.querySelectorAll('.player-seat, .seat-me');
             let result = "";
-            seats.forEach(seat => {
-                result += seat.id + ": left: " + parseFloat(seat.style.left).toFixed(1) + "%, top: " + parseFloat(seat.style.top).toFixed(1) + "%;\n";
+            elements.forEach(el => {
+                let id = el.id || 'me';
+                result += id + ": left: " + parseFloat(el.style.left).toFixed(1) + "%, top: " + parseFloat(el.style.top).toFixed(1) + "%;\n";
             });
-            document.getElementById('coords-output').innerText = result;
-            document.getElementById('coords-output').style.color = "#4caf50";
+            
+            // Показываем в модальном окне
+            document.getElementById('result-text').innerText = result;
+            document.getElementById('modal').classList.add('active');
         }
     </script>
 </body>
