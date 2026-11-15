@@ -1,4 +1,4 @@
-/* style.css — Полноэкранный стол */
+/* style.css — Полноэкранный стол и места для 9 игроков */
 
 :root {
     --bg-color: #1a1a1a;
@@ -6,7 +6,6 @@
     --card-bg: #ffffff;
     --card-text-black: #000000;
     --card-text-red: #d32f2f;
-    --btn-bg: #333333;
     --accent-color: #ff9800;
 }
 
@@ -20,7 +19,7 @@
 
 html, body {
     height: 100%;
-    overflow: hidden; /* Убираем прокрутку страницы */
+    overflow: hidden; /* Убираем прокрутку */
     background-color: var(--bg-color);
     color: white;
 }
@@ -28,132 +27,84 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    /* Отступы для безопасных зон (чтобы не перекрывать жесты Telegram) */
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Верхняя панель (статус) — сделаем её очень тонкой */
+/* Верхняя панель (статус) */
 .top-bar {
     display: flex;
     justify-content: space-between;
-    padding: 5px 10px;
+    padding: 8px 15px;
     background-color: #222;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #444;
     flex-shrink: 0;
 }
 
-/* Игровое поле — растягиваем на весь экран */
+/* Игровое поле — на весь экран */
 .table-area {
-    flex: 1; /* Занимает всё свободное место */
+    flex: 1;
     background-color: var(--table-color);
-    margin: 5px;
-    border-radius: 50% / 20%; /* Форма овала для стола */
-    border: 4px solid #4a2c12;
+    margin: 10px;
+    border-radius: 50% / 20%; /* Овал */
+    border: 6px solid #4a2c12;
+    position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
 }
 
-/* Зона для игроков (пока просто пустые кружки по краям) */
+/* Места для игроков */
 .player-seat {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.5);
+    width: 45px;
+    height: 45px;
+    background-color: rgba(0, 0, 0, 0.6);
     border-radius: 50%;
     border: 2px solid #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 12px;
+    font-weight: bold;
     color: #ccc;
 }
 
-/* Примеры позиций (можно менять) */
-.seat-top { top: 5px; left: 50%; transform: translateX(-50%); }
-.seat-bottom { bottom: 5px; left: 50%; transform: translateX(-50%); }
-.seat-left { left: 5px; top: 50%; transform: translateY(-50%); }
-.seat-right { right: 5px; top: 50%; transform: translateY(-50%); }
+/* Позиции для 9 игроков (по кругу) */
+.seat-1 { top: 5%; left: 50%; transform: translateX(-50%); } /* Центр сверху */
+.seat-2 { top: 20%; right: 10%; }
+.seat-3 { top: 50%; right: 5%; transform: translateY(-50%); }
+.seat-4 { bottom: 20%; right: 10%; }
+.seat-5 { bottom: 5%; left: 50%; transform: translateX(-50%); } /* Центр снизу */
+.seat-6 { bottom: 20%; left: 10%; }
+.seat-7 { top: 50%; left: 5%; transform: translateY(-50%); }
+.seat-8 { top: 20%; left: 10%; }
+.seat-9 { top: 30%; right: 25%; } /* Дополнительное место */
 
 /* Карты на столе */
 .board {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     z-index: 2;
 }
 
 .card {
-    width: 40px;
-    height: 60px;
+    width: 50px;
+    height: 75px;
     background-color: var(--card-bg);
-    border-radius: 5px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
     color: var(--card-text-black);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
 }
 .card.red { color: var(--card-text-red); }
 
-/* Панель ввода (матрица и кнопки) — внизу, фиксированной высоты */
+/* Прячем нижнюю панель с кнопками */
 .input-area {
-    background-color: #222;
-    padding: 10px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
-    max-height: 40vh; /* Ограничиваем высоту, чтобы стол не пропадал */
-    overflow-y: auto;
-}
-
-.grid-13x13 {
-    display: grid;
-    grid-template-columns: repeat(13, 1fr);
-    gap: 1px;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-}
-
-.grid-cell {
-    background-color: #444;
-    border-radius: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    color: #aaa;
-    cursor: pointer;
-}
-
-.buttons-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-button {
-    background-color: var(--btn-bg);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    flex: 1;
-}
-
-button.primary {
-    background-color: var(--accent-color);
-    color: #000;
+    display: none;
     }
