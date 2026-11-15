@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Poker Bot</title>
     <style>
-        /* Все стили внутри файла, чтобы не было проблем с кэшем */
         :root {
             --bg-color: #1a1a1a;
             --table-color: #0b6623;
@@ -16,18 +15,54 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+        
         .top-bar { display: flex; justify-content: space-between; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; }
-        .table-area { flex: 1; background-color: var(--table-color); margin: 10px; border-radius: 50% / 25%; border: 6px solid #4a2c12; position: relative; display: flex; align-items: center; justify-content: center; }
-        .player-seat { position: absolute; width: 40px; height: 40px; background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: #ccc; }
-        .seat-1 { top: 5%; left: 50%; transform: translateX(-50%); }
-        .seat-2 { top: 15%; left: 85%; transform: translate(-50%, 0); }
-        .seat-3 { top: 35%; left: 92%; transform: translate(-50%, 0); }
-        .seat-4 { top: 60%; left: 85%; transform: translate(-50%, 0); }
-        .seat-5 { top: 85%; left: 50%; transform: translateX(-50%); }
-        .seat-6 { top: 60%; left: 15%; transform: translate(-50%, 0); }
-        .seat-7 { top: 35%; left: 8%; transform: translate(-50%, 0); }
-        .seat-8 { top: 15%; left: 15%; transform: translate(-50%, 0); }
-        .seat-9 { top: 35%; left: 70%; transform: translateX(-50%); }
+        
+        /* Сам стол */
+        .table-area { 
+            flex: 1; 
+            background-color: var(--table-color); 
+            margin: 10px; 
+            border-radius: 100px; /* Более круглый овал */
+            border: 6px solid #4a2c12; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        /* Кружки игроков */
+        .player-seat { 
+            position: absolute; 
+            width: 45px; 
+            height: 45px; 
+            background-color: rgba(0, 0, 0, 0.7); 
+            border-radius: 50%; 
+            border: 2px solid #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: #ccc; 
+        }
+
+        /* Жесткая расстановка по овалу */
+        /* Верх */
+        .seat-1 { top: 2%; left: 50%; transform: translateX(-50%); }
+        /* Правая сторона */
+        .seat-2 { top: 15%; right: 15%; transform: translateX(50%); }
+        .seat-3 { top: 50%; right: 2%; transform: translateY(-50%); }
+        .seat-4 { bottom: 15%; right: 15%; transform: translateX(50%); }
+        /* Низ */
+        .seat-5 { bottom: 2%; left: 50%; transform: translateX(-50%); }
+        /* Левая сторона */
+        .seat-6 { bottom: 15%; left: 15%; transform: translateX(-50%); }
+        .seat-7 { top: 50%; left: 2%; transform: translateY(-50%); }
+        .seat-8 { top: 15%; left: 15%; transform: translateX(-50%); }
+        /* Внутреннее место (P9) */
+        .seat-9 { top: 20%; right: 25%; transform: translateX(50%); }
+
         .board { display: flex; gap: 8px; z-index: 2; }
         .card { width: 50px; height: 75px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
@@ -60,4 +95,4 @@
     </div>
 
 </body>
-                </html>
+        </html>
