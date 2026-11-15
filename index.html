@@ -28,8 +28,10 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
+            overflow: hidden; /* Важно, чтобы игроки не вылезали за стол */
         }
 
+        /* Кружки игроков теперь будут позиционироваться из JS */
         .player-seat { 
             position: absolute; 
             width: 45px; 
@@ -43,25 +45,29 @@
             font-size: 12px; 
             font-weight: bold; 
             color: #ccc; 
+            transform: translate(-50%, -50%); /* Центрируем относительно координаты */
+            z-index: 10;
         }
 
-        /* Жесткая расстановка по овалу */
-        .seat-1 { top: 2%; left: 50%; transform: translateX(-50%); }
-        
-        /* Правая сторона - разводим P2 и P9 */
-        .seat-2 { top: 15%; right: 10%; transform: translateX(50%); }
-        .seat-3 { top: 50%; right: 2%; transform: translateY(-50%); }
-        .seat-4 { bottom: 15%; right: 10%; transform: translateX(50%); }
-        
-        .seat-5 { bottom: 2%; left: 50%; transform: translateX(-50%); }
-        
-        /* Левая сторона */
-        .seat-6 { bottom: 15%; left: 10%; transform: translateX(-50%); }
-        .seat-7 { top: 50%; left: 2%; transform: translateY(-50%); }
-        .seat-8 { top: 15%; left: 10%; transform: translateX(-50%); }
-        
-        /* P9 сдвигаем ближе к центру по вертикали и горизонтали, чтобы он был отдельно */
-        .seat-9 { top: 35%; right: 25%; transform: translateX(50%); }
+        /* Место "Вы" (всегда внизу) */
+        .seat-me { 
+            position: absolute; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 45px; 
+            height: 45px; 
+            background-color: rgba(0, 0, 0, 0.7); 
+            border-radius: 50%; 
+            border: 2px solid #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: #ccc; 
+            z-index: 10;
+        }
 
         .board { display: flex; gap: 8px; z-index: 2; }
         .card { width: 50px; height: 75px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
@@ -76,16 +82,9 @@
         <span>Стек: 100 BB</span>
     </div>
 
-    <div class="table-area">
-        <div class="player-seat seat-1">P1</div>
-        <div class="player-seat seat-2">P2</div>
-        <div class="player-seat seat-3">P3</div>
-        <div class="player-seat seat-4">P4</div>
-        <div class="player-seat seat-5">Вы</div>
-        <div class="player-seat seat-6">P6</div>
-        <div class="player-seat seat-7">P7</div>
-        <div class="player-seat seat-8">P8</div>
-        <div class="player-seat seat-9">P9</div>
+    <div class="table-area" id="table-area">
+        <!-- Сюда JS будет вставлять игроков по кругу -->
+        <div class="player-seat seat-me">Вы</div>
 
         <div class="board" id="board">
             <div class="card red">A♥</div>
@@ -94,5 +93,6 @@
         </div>
     </div>
 
+    <script src="app.js"></script>
 </body>
 </html>
