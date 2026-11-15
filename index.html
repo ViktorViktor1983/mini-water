@@ -2,11 +2,44 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Water</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Poker Bot</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Привет, Покер!</h1>
-    <p>Это тестовая страница. Связь работает.</p>
+
+    <!-- Верхняя панель статуса -->
+    <div class="top-bar">
+        <span>Раздача #1</span>
+        <span>Пот: 3 BB</span>
+        <span>Стек: 100 BB</span>
+    </div>
+
+    <!-- Игровой стол -->
+    <div class="table-area">
+        <div class="board" id="board">
+            <!-- Сюда будут выводиться карты борда -->
+            <div class="card">A♥</div>
+            <div class="card">K♦</div>
+            <div class="card">7♣</div>
+        </div>
+    </div>
+
+    <!-- Панель ввода -->
+    <div class="input-area">
+        <div class="grid-13x13" id="matrix">
+            <!-- Сетка для визуализации (заглушка) -->
+            <div class="grid-cell raise">AA</div>
+            <div class="grid-cell">AKs</div>
+            <div class="grid-cell">...</div>
+        </div>
+        
+        <div class="buttons-row">
+            <button class="primary">Сделать ход</button>
+            <button>Новая раздача</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
