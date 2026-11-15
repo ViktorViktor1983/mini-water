@@ -31,13 +31,13 @@
             padding: 10px;
         }
 
-        /* Меняем пропорцию на 4:5 (вытянутый) */
+        /* Экстремальная пропорция 1:2 (очень длинный) */
         .table-area { 
             width: 100%;
-            max-width: 65vh; 
-            aspect-ratio: 4 / 5; 
+            max-width: 50vh; /* Ограничиваем ширину, чтобы влез в высоту */
+            aspect-ratio: 1 / 2; 
             background-color: var(--table-color); 
-            border-radius: 80px; 
+            border-radius: 60px; /* Сильно скругленные края */
             border: 6px solid #4a2c12; 
             position: relative; 
             overflow: hidden; 
@@ -57,18 +57,19 @@
         .player-seat:active { cursor: grabbing; border-color: #ff9800; }
 
         .seat-me { 
-            position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); 
+            position: absolute; bottom: 3%; left: 50%; transform: translateX(-50%); 
             width: 40px; height: 40px; 
             background-color: rgba(0, 0, 0, 0.7); border-radius: 50%; border: 2px solid #fff; 
             display: flex; align-items: center; justify-content: center; 
             font-size: 12px; font-weight: bold; color: #ccc; z-index: 10;
         }
-        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
+        
+        .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .card { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
 
         .my-cards { 
-            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); 
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); 
             display: flex; gap: 10px; z-index: 15; 
         }
         .my-card-slot {
@@ -113,15 +114,15 @@
             </div>
 
             <!-- Двигай этих ребят -->
-            <div class="player-seat" id="p1" style="left: 50%; top: 10%;">P1</div>
-            <div class="player-seat" id="p2" style="left: 85%; top: 25%;">P2</div>
-            <div class="player-seat" id="p3" style="left: 85%; top: 50%;">P3</div>
-            <div class="player-seat" id="p4" style="left: 85%; top: 75%;">P4</div>
-            <div class="player-seat" id="p5" style="left: 65%; top: 90%;">P5</div>
-            <div class="player-seat" id="p6" style="left: 35%; top: 90%;">P6</div>
-            <div class="player-seat" id="p7" style="left: 15%; top: 75%;">P7</div>
-            <div class="player-seat" id="p8" style="left: 15%; top: 50%;">P8</div>
-            <div class="player-seat" id="p9" style="left: 15%; top: 25%;">P9</div>
+            <div class="player-seat" id="p1" style="left: 50%; top: 5%;">P1</div>
+            <div class="player-seat" id="p2" style="left: 85%; top: 20%;">P2</div>
+            <div class="player-seat" id="p3" style="left: 85%; top: 40%;">P3</div>
+            <div class="player-seat" id="p4" style="left: 85%; top: 60%;">P4</div>
+            <div class="player-seat" id="p5" style="left: 65%; top: 85%;">P5</div>
+            <div class="player-seat" id="p6" style="left: 35%; top: 85%;">P6</div>
+            <div class="player-seat" id="p7" style="left: 15%; top: 60%;">P7</div>
+            <div class="player-seat" id="p8" style="left: 15%; top: 40%;">P8</div>
+            <div class="player-seat" id="p9" style="left: 15%; top: 20%;">P9</div>
         </div>
     </div>
 
