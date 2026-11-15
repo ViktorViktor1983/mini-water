@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Poker Bot</title>
+    <title>Poker Bot Editor</title>
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -43,6 +43,7 @@
             overflow: hidden; 
         }
 
+        /* Все двигаются */
         .player-seat, .seat-me { 
             position: absolute; 
             width: 40px; height: 40px; 
@@ -52,7 +53,9 @@
             font-size: 12px; font-weight: bold; color: #ccc; 
             transform: translate(-50%, -50%); 
             z-index: 10;
+            cursor: grab;
         }
+        .player-seat:active, .seat-me:active { cursor: grabbing; border-color: #ff9800; }
 
         .board { display: flex; gap: 8px; z-index: 2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
         .card { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
@@ -75,7 +78,15 @@
             padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; flex-direction: column; padding: 20px; overflow-y: auto;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: #222; padding: 15px; border-radius: 10px; color: #4caf50; font-family: monospace; font-size: 14px; white-space: pre-wrap; margin-top: 20px; }
+        .close-btn { background: #d32f2f; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; align-self: flex-start; }
     </style>
 </head>
 <body>
@@ -90,7 +101,7 @@
 
     <div class="table-container">
         <div class="table-area" id="table-area">
-            <!-- Ты (9-й игрок) -->
+            <!-- Ты -->
             <div class="seat-me" id="me" style="left: 50.1%; top: 95.0%;">Вы</div>
             
             <div class="my-cards">
@@ -104,7 +115,7 @@
                 <div class="card">7♣</div>
             </div>
 
-            <!-- Восемь других игроков (P1 - P8) -->
+            <!-- 8 игроков (P1 - P8) -->
             <div class="player-seat" id="p1" style="left: 50.0%; top: 5.0%;">P1</div>
             <div class="player-seat" id="p2" style="left: 89.6%; top: 7.4%;">P2</div>
             <div class="player-seat" id="p3" style="left: 92.8%; top: 34.9%;">P3</div>
@@ -117,8 +128,69 @@
     </div>
 
     <div class="control-panel">
-        <div class="advice-text">Ожидание хода...</div>
+        <button onclick="saveCoords()" style="background:#4caf50; color:white; padding: 12px 25px; border:none; border-radius:10px; font-size: 16px; font-weight:bold;">СОХРАНИТЬ</button>
     </div>
 
+    <!-- Модальное окно -->
+    <div class="modal-overlay" id="modal">
+        <button class="close-btn" onclick="document.getElementById('modal').classList.remove('active')">Закрыть</button>
+        <div class="modal-content" id="result-text"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const draggables = document.querySelectorAll('.player-seat, .seat-me');
+            let activeElement = null;
+            let initialX, initialY;
+
+            draggables.forEach(el => {
+                el.addEventListener('touchstart', (e) => {
+                    activeElement = el;
+                    const touch = e.touches[0];
+                    const rect = el.getBoundingClientRect();
+                    initialX = touch.clientX - (rect.left + rect.width / 2);
+                    initialY = touch.clientY - (rect.top + rect.height / 2);
+                }, {passive: false});
+
+                el.addEventListener('touchmove', (e) => {
+                    if (!activeElement) return;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const table = document.getElementById('table-area');
+                    const tableRect = table.getBoundingClientRect();
+
+                    let newX = touch.clientX - tableRect.left - initialX;
+                    let newY = touch.clientY - tableRect.top - initialY;
+
+                    let percentX = (newX / tableRect.width) * 100;
+                    let percentY = (newY / tableRect.height) * 100;
+
+                    percentX = Math.max(5, Math.min(95, percentX));
+                    percentY = Math.max(5, Math.min(95, percentY));
+
+                    activeElement.style.left = percentX + '%';
+                    activeElement.style.top = percentY + '%';
+                    activeElement.style.bottom = 'auto';
+                    activeElement.style.transform = 'translate(-50%, -50%)';
+                }, {passive: false});
+
+                el.addEventListener('touchend', () => {
+                    activeElement = null;
+                });
+            });
+        });
+
+        function saveCoords() {
+            const elements = document.querySelectorAll('.player-seat, .seat-me');
+            let result = "";
+            elements.forEach(el => {
+                let id = el.id || 'me';
+                result += id + ": left: " + parseFloat(el.style.left).toFixed(1) + "%, top: " + parseFloat(el.style.top).toFixed(1) + "%;\n";
+            });
+            
+            document.getElementById('result-text').innerText = result;
+            document.getElementById('modal').classList.add('active');
+        }
+    </script>
 </body>
-                </html>
+</html>
