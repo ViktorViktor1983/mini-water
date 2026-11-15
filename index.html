@@ -31,13 +31,14 @@
             padding: 10px;
         }
 
-        /* Экстремальная пропорция 1:2 (очень длинный) */
+        /* Пропорция 2:3 (вытянутый, но влезает) */
         .table-area { 
             width: 100%;
-            max-width: 50vh; /* Ограничиваем ширину, чтобы влез в высоту */
-            aspect-ratio: 1 / 2; 
+            max-width: 60vh; /* Ограничиваем ширину, чтобы не вылез */
+            max-height: 100%; 
+            aspect-ratio: 2 / 3; 
             background-color: var(--table-color); 
-            border-radius: 60px; /* Сильно скругленные края */
+            border-radius: 70px; 
             border: 6px solid #4a2c12; 
             position: relative; 
             overflow: hidden; 
@@ -183,4 +184,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
