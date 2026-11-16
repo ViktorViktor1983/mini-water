@@ -110,7 +110,10 @@
         
         .separator { width: 10px; }
 
-        .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; }
+        /* Слоты моих карт */
+        .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; transition: opacity 0.3s; }
+        .my-cards.hidden { opacity: 0; } /* Класс для скрытия */
+        
         .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s; }
         .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .my-card-slot.filled.red { color: var(--card-text-red); }
@@ -156,7 +159,7 @@
     <div class="table-container">
         <div class="table-area" id="table-area">
             
-            <div class="my-cards">
+            <div class="my-cards" id="my-cards-container">
                 <div class="my-card-slot" id="slot-1">?</div>
                 <div class="my-card-slot" id="slot-2">?</div>
             </div>
@@ -250,16 +253,17 @@
     <script>
         let currentTargetId = null;
         let currentRank = "";
-        let longPressTimer = null;
-        let isLongPress = false;
 
-        // --- ЛОГИКА КАРТ (БЕЗ ИЗМЕНЕНИЙ) ---
+        // --- ЛОГИКА КАРТ (БОРД И МОИ) ---
         const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
         cardElements.forEach(el => {
+            let cardLongPress = false;
+            let cardTimer = null;
+
             el.addEventListener('touchstart', (e) => {
-                isLongPress = false;
-                longPressTimer = setTimeout(() => {
-                    isLongPress = true;
+                cardLongPress = false;
+                cardTimer = setTimeout(() => {
+                    cardLongPress = true;
                     el.innerText = "?";
                     el.classList.remove("filled", "red");
                     if (el.classList.contains('board-slot')) {
@@ -267,11 +271,15 @@
                     }
                 }, 500);
             });
+
             el.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-                if (!isLongPress) openInput(el.id);
+                clearTimeout(cardTimer);
+                if (!cardLongPress) {
+                    openInput(el.id);
+                }
             });
-            el.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+
+            el.addEventListener('touchmove', () => clearTimeout(cardTimer));
         });
 
         function openInput(id) {
@@ -320,7 +328,7 @@
             closeInput();
         }
 
-        // --- ЛОГИКА ИГРОКОВ (ИСПРАВЛЕНА ПО ТВОЕЙ СХЕМЕ) ---
+        // --- ЛОГИКА ИГРОКОВ ---
         const seats = document.querySelectorAll('.player-seat, .seat-me');
         seats.forEach(seat => {
             let pressTimer = null;
@@ -330,49 +338,44 @@
                 isSeatLongPress = false;
                 pressTimer = setTimeout(() => {
                     isSeatLongPress = true;
-                    // Долгое нажатие: Игрок уходит из-за стола
                     let chip = seat.querySelector('.chip');
-                    chip.style.backgroundColor = 'var(--chip-red)'; // Красный
-                    let cards = seat.querySelector('.player-cards');
-                    if (cards) cards.classList.add('hidden'); // Карты убираем
+                    
+                    // Долгое нажатие: смена цвета фишки
+                    if (chip.style.backgroundColor !== 'var(--chip-red)') {
+                        chip.style.backgroundColor = 'var(--chip-red)';
+                        let cards = seat.querySelector('.player-cards');
+                        if (cards) cards.classList.add('hidden');
+                    } 
+                    else {
+                        chip.style.backgroundColor = 'var(--chip-blue)';
+                        let cards = seat.querySelector('.player-cards');
+                        if (cards) cards.classList.remove('hidden');
+                    }
                 }, 500);
             });
 
             seat.addEventListener('touchend', () => {
                 clearTimeout(pressTimer);
                 
+                // Короткое нажатие (Фолд)
                 if (!isSeatLongPress) {
-                    // Короткое нажатие: Фолд (карты исчезают, цвет остается синим)
-                    let chip = seat.querySelector('.chip');
-                    
-                    // Если игрок за столом (синий), просто убираем карты
-                    if (chip.style.backgroundColor !== 'var(--chip-red)') {
-                        let cards = seat.querySelector('.player-cards');
-                        if (cards) cards.classList.add('hidden');
+                    // Если нажали на СВОЮ фишку ("me")
+                    if (seat.id === 'me') {
+                        document.getElementById('my-cards-container').classList.add('hidden');
+                    } 
+                    // Если нажали на чужую фишку
+                    else {
+                        let chip = seat.querySelector('.chip');
+                        if (chip.style.backgroundColor !== 'var(--chip-red)') {
+                            let cards = seat.querySelector('.player-cards');
+                            if (cards) cards.classList.add('hidden');
+                        }
                     }
                 }
             });
 
             seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
         });
-
-        // Чтобы можно было вернуть игрока за стол, используем двойной клик (или долгое нажатие на красного)
-        // Для этого добавим обработчик, который при долгом нажатии на красного делает его снова синим
-        // Встроим это в логику touchstart
-        seats.forEach(seat => {
-             seat.addEventListener('touchstart', (e) => {
-                 let chip = seat.querySelector('.chip');
-                 // Если он красный, то долгое нажатие вернет его в игру
-                 if (chip.style.backgroundColor === 'var(--chip-red)') {
-                     let timer = setTimeout(() => {
-                         chip.style.backgroundColor = 'var(--chip-blue)';
-                         let cards = seat.querySelector('.player-cards');
-                         if (cards) cards.classList.remove('hidden');
-                     }, 500);
-                     seat.addEventListener('touchend', () => clearTimeout(timer), {once: true});
-                 }
-             });
-        });
     </script>
 </body>
-                    </html>
+    </html>
