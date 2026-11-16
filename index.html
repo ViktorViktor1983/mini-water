@@ -17,6 +17,7 @@
             
             --chip-blue: #5c9ead; 
             --chip-red: #d32f2f;  
+            --chip-action: #ff9800;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
@@ -55,95 +56,124 @@
             justify-content: center;
             transform: translate(-50%, -50%); 
             z-index: 10;
-            cursor: pointer;
             width: 40px;
             height: 40px;
         }
 
-        .player-cards {
-            display: flex;
-            gap: 2px;
-            position: absolute;
-            transition: opacity 0.3s;
-            z-index: 11;
-        }
-        
+        /* Карты игроков */
+        .player-cards { display: flex; gap: 2px; position: absolute; transition: opacity 0.3s; z-index: 11; }
         .pos-top { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .pos-left { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 2px; }
         .pos-right { left: 100%; top: 50%; transform: translateY(-50%); margin-left: 2px; }
-
         .player-cards.hidden { opacity: 0; }
-        
-        .mini-card {
-            width: 14px;
-            height: 20px;
-            background-color: #b0b0b0;
-            border: 1px solid #555;
-            border-radius: 2px;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
-        }
+        .mini-card { width: 14px; height: 20px; background-color: #b0b0b0; border: 1px solid #555; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px); }
 
+        /* Фишки */
         .chip {
-            width: 34px; 
-            height: 34px;
+            width: 34px; height: 34px;
             background-color: var(--chip-blue);
-            border-radius: 50%;
-            border: 3px dashed #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 2px black;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            border-radius: 50%; border: 3px dashed #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; color: white;
+            text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             transition: background-color 0.3s;
+            z-index: 12;
         }
 
+        /* Значки действий (Колл/Рейз) */
+        .action-badge {
+            position: absolute;
+            top: -10px; right: -10px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold;
+            z-index: 13;
+            display: none;
+        }
+        .action-badge.show { display: flex; }
+        .badge-call { background-color: #4caf50; color: white; }
+        .badge-raise { background-color: #ff9800; color: black; font-size: 8px; }
+
+        /* Панель действий (3 кнопки) */
+        .action-menu {
+            position: absolute;
+            bottom: 100%; left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+            background-color: rgba(0,0,0,0.9);
+            padding: 4px; border-radius: 8px;
+            display: flex; gap: 4px;
+            z-index: 30;
+            display: none;
+            white-space: nowrap;
+        }
+        .action-menu.active { display: flex; }
+        .action-menu button {
+            background: #444; color: white; border: none;
+            padding: 6px 8px; border-radius: 4px;
+            font-size: 10px; font-weight: bold; cursor: pointer;
+        }
+        .action-menu button:active { background: var(--btn-active); color: black; }
+
+        /* Борд */
         .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
         .card, .board-slot { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
-        
         .board-slot { background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; cursor: pointer; box-shadow: none; }
         .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .board-slot.filled.red { color: var(--card-text-red); }
-        
         .separator { width: 10px; }
 
-        /* Слоты моих карт */
+        /* Мои карты */
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; transition: opacity 0.3s; }
-        .my-cards.hidden { opacity: 0; } /* Класс для скрытия */
-        
+        .my-cards.hidden { opacity: 0; }
         .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s; }
         .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .my-card-slot.filled.red { color: var(--card-text-red); }
 
-        .control-panel {
-            background-color: var(--panel-bg);
-            border-top-left-radius: 15px; border-top-right-radius: 15px;
-            padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
+        .control-panel { background-color: var(--panel-bg); border-top-left-radius: 15px; border-top-right-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
         .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
 
-        .input-panel {
-            position: absolute; bottom: -100%; left: 0; width: 100%;
-            background-color: var(--panel-bg);
-            border-top-left-radius: 20px; border-top-right-radius: 20px;
-            padding: 20px; z-index: 50;
-            transition: bottom 0.3s ease;
-            display: flex; flex-direction: column; gap: 10px;
-        }
+        /* Ввод карт */
+        .input-panel { position: absolute; bottom: -100%; left: 0; width: 100%; background-color: var(--panel-bg); border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; z-index: 50; transition: bottom 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
         .input-panel.active { bottom: 0; }
-
         .row { display: flex; gap: 5px; justify-content: center; }
         .input-btn { flex: 1; padding: 15px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
         .input-btn:active { background-color: var(--btn-active); color: black; }
-        
         .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
         .suits-row.active { display: flex; }
         .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
         .suit-btn:active { background-color: var(--btn-active); color: black; }
+
+        /* Модальное окно Рейза */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #222; padding: 20px; border-radius: 15px;
+            width: 80%; max-width: 300px; text-align: center;
+            border: 1px solid #444;
+        }
+        .modal-box h3 { margin-bottom: 15px; font-size: 18px; }
+        .modal-input-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .modal-input-row input {
+            flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #555;
+            background: #111; color: white; font-size: 18px; text-align: center;
+        }
+        .modal-input-row button {
+            padding: 10px 20px; border-radius: 8px; border: none;
+            background: var(--btn-active); color: black; font-weight: bold; font-size: 16px; cursor: pointer;
+        }
+        .quick-bets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .quick-bets button {
+            padding: 10px 0; border-radius: 6px; border: none;
+            background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer;
+        }
+        .quick-bets button:active { background: var(--btn-active); color: black; }
     </style>
 </head>
 <body>
@@ -173,40 +203,68 @@
                 <div class="board-slot" id="board-5">?</div>
             </div>
 
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
+                <div class="action-menu"><button onclick="doAction('p1', 'fold')">Фолд</button><button onclick="doAction('p1', 'call')">Чек/Колл</button><button onclick="openRaiseModal('p1')">Рейз</button></div>
+                <div class="action-badge badge-call" id="badge-p1-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p1-raise">3</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">1</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
+                <div class="action-menu"><button onclick="doAction('p2', 'fold')">Фолд</button><button onclick="doAction('p2', 'call')">Чек/Колл</button><button onclick="openRaiseModal('p2')">Рейз</button></div>
+                <div class="action-badge badge-call" id="badge-p2-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p2-raise">3</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">2</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
+                <div class="action-menu" style="bottom: 50%; left: auto; right: 100%; transform: translateY(50%); margin-right: 5px; margin-bottom: 0;"><button onclick="doAction('p3', 'fold')">Ф</button><button onclick="doAction('p3', 'call')">К</button><button onclick="openRaiseModal('p3')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p3-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p3-raise">3</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">3</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
+                <div class="action-menu" style="bottom: 50%; left: auto; right: 100%; transform: translateY(50%); margin-right: 5px; margin-bottom: 0;"><button onclick="doAction('p4', 'fold')">Ф</button><button onclick="doAction('p4', 'call')">К</button><button onclick="openRaiseModal('p4')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p4-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p4-raise">3</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">4</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
+                <div class="action-menu" style="bottom: 50%; left: auto; right: 100%; transform: translateY(50%); margin-right: 5px; margin-bottom: 0;"><button onclick="doAction('p5', 'fold')">Ф</button><button onclick="doAction('p5', 'call')">К</button><button onclick="openRaiseModal('p5')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p5-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p5-raise">3</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">5</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
+                <div class="action-menu" style="bottom: 50%; left: 100%; transform: translateY(50%); margin-left: 5px; margin-bottom: 0;"><button onclick="doAction('p6', 'fold')">Ф</button><button onclick="doAction('p6', 'call')">К</button><button onclick="openRaiseModal('p6')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p6-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p6-raise">3</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">6</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
+                <div class="action-menu" style="bottom: 50%; left: 100%; transform: translateY(50%); margin-left: 5px; margin-bottom: 0;"><button onclick="doAction('p7', 'fold')">Ф</button><button onclick="doAction('p7', 'call')">К</button><button onclick="openRaiseModal('p7')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p7-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p7-raise">3</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">7</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
+                <div class="action-menu" style="bottom: 50%; left: 100%; transform: translateY(50%); margin-left: 5px; margin-bottom: 0;"><button onclick="doAction('p8', 'fold')">Ф</button><button onclick="doAction('p8', 'call')">К</button><button onclick="openRaiseModal('p8')">Р</button></div>
+                <div class="action-badge badge-call" id="badge-p8-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-p8-raise">3</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">8</div>
             </div>
 
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
+                <div class="action-menu" style="bottom: 100%; margin-bottom: 5px;"><button onclick="doAction('me', 'fold')">Фолд</button><button onclick="doAction('me', 'call')">Чек/Колл</button><button onclick="openRaiseModal('me')">Рейз</button></div>
+                <div class="action-badge badge-call" id="badge-me-call">✓</div>
+                <div class="action-badge badge-raise" id="badge-me-raise">3</div>
                 <div class="chip">Вы</div>
             </div>
 
@@ -217,9 +275,9 @@
         <div class="advice-text">Ожидание хода...</div>
     </div>
 
+    <!-- Окно ввода карт -->
     <div class="input-panel" id="input-panel">
         <button class="close-btn" onclick="closeInput()" style="background:#d32f2f; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">Отмена</button>
-        
         <div id="ranks-view">
             <div class="row">
                 <button class="input-btn" onclick="selectRank('A')">A</button>
@@ -241,7 +299,6 @@
                 <button class="input-btn" onclick="selectRank('2')">2</button>
             </div>
         </div>
-
         <div class="suits-row" id="suits-view">
             <button class="suit-btn" style="color:white;" onclick="selectSuit('♠')">♠</button>
             <button class="suit-btn" style="color:var(--card-text-red);" onclick="selectSuit('♥')">♥</button>
@@ -250,132 +307,36 @@
         </div>
     </div>
 
+    <!-- Модальное окно Рейза -->
+    <div class="modal-overlay" id="raise-modal" onclick="closeRaiseModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3>Размер рейза (BB)</h3>
+            <div class="modal-input-row">
+                <input type="number" id="raise-input" placeholder="0" step="0.5">
+                <button onclick="submitRaise()">ОК</button>
+            </div>
+            <div class="quick-bets">
+                <button onclick="setRaise(2)">2</button>
+                <button onclick="setRaise(2.5)">2.5</button>
+                <button onclick="setRaise(3)">3</button>
+                <button onclick="setRaise(4)">4</button>
+                <button onclick="setRaise(5)">5</button>
+                <button onclick="setRaise(6)">6</button>
+                <button onclick="setRaise(8)">8</button>
+                <button onclick="setRaise(10)">10</button>
+                <button onclick="setRaise(15)">15</button>
+                <button onclick="setRaise('all')">All-in</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentTargetId = null;
         let currentRank = "";
+        let targetSeatForRaise = null;
 
-        // --- ЛОГИКА КАРТ (БОРД И МОИ) ---
+        // --- ЛОГИКА КАРТ ---
         const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
         cardElements.forEach(el => {
             let cardLongPress = false;
-            let cardTimer = null;
-
-            el.addEventListener('touchstart', (e) => {
-                cardLongPress = false;
-                cardTimer = setTimeout(() => {
-                    cardLongPress = true;
-                    el.innerText = "?";
-                    el.classList.remove("filled", "red");
-                    if (el.classList.contains('board-slot')) {
-                        el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-                    }
-                }, 500);
-            });
-
-            el.addEventListener('touchend', () => {
-                clearTimeout(cardTimer);
-                if (!cardLongPress) {
-                    openInput(el.id);
-                }
-            });
-
-            el.addEventListener('touchmove', () => clearTimeout(cardTimer));
-        });
-
-        function openInput(id) {
-            currentTargetId = id;
-            document.getElementById('ranks-view').style.display = 'block';
-            document.getElementById('suits-view').classList.remove('active');
-            document.getElementById('input-panel').classList.add('active');
-        }
-
-        function closeInput() {
-            document.getElementById('input-panel').classList.remove('active');
-        }
-
-        function selectRank(rank) {
-            currentRank = rank;
-            document.getElementById('ranks-view').style.display = 'none';
-            document.getElementById('suits-view').classList.add('active');
-        }
-
-        function selectSuit(suit) {
-            let newCardValue = currentRank + suit;
-            let isDuplicate = false;
-
-            cardElements.forEach(el => {
-                if (el.id !== currentTargetId && el.innerText === newCardValue) {
-                    isDuplicate = true;
-                }
-            });
-
-            if (isDuplicate) {
-                alert("Такая карта уже есть!");
-                return;
-            }
-
-            let el = document.getElementById(currentTargetId);
-            el.innerText = newCardValue;
-            el.classList.add("filled");
-            
-            if (el.classList.contains('board-slot')) {
-                el.style.backgroundColor = "var(--card-bg)";
-            }
-
-            if (suit === '♥' || suit === '♦') el.classList.add("red");
-            else el.classList.remove("red");
-
-            closeInput();
-        }
-
-        // --- ЛОГИКА ИГРОКОВ ---
-        const seats = document.querySelectorAll('.player-seat, .seat-me');
-        seats.forEach(seat => {
-            let pressTimer = null;
-            let isSeatLongPress = false;
-
-            seat.addEventListener('touchstart', (e) => {
-                isSeatLongPress = false;
-                pressTimer = setTimeout(() => {
-                    isSeatLongPress = true;
-                    let chip = seat.querySelector('.chip');
-                    
-                    // Долгое нажатие: смена цвета фишки
-                    if (chip.style.backgroundColor !== 'var(--chip-red)') {
-                        chip.style.backgroundColor = 'var(--chip-red)';
-                        let cards = seat.querySelector('.player-cards');
-                        if (cards) cards.classList.add('hidden');
-                    } 
-                    else {
-                        chip.style.backgroundColor = 'var(--chip-blue)';
-                        let cards = seat.querySelector('.player-cards');
-                        if (cards) cards.classList.remove('hidden');
-                    }
-                }, 500);
-            });
-
-            seat.addEventListener('touchend', () => {
-                clearTimeout(pressTimer);
-                
-                // Короткое нажатие (Фолд)
-                if (!isSeatLongPress) {
-                    // Если нажали на СВОЮ фишку ("me")
-                    if (seat.id === 'me') {
-                        document.getElementById('my-cards-container').classList.add('hidden');
-                    } 
-                    // Если нажали на чужую фишку
-                    else {
-                        let chip = seat.querySelector('.chip');
-                        if (chip.style.backgroundColor !== 'var(--chip-red)') {
-                            let cards = seat.querySelector('.player-cards');
-                            if (cards) cards.classList.add('hidden');
-                        }
-                    }
-                }
-            });
-
-            seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
-        });
-    </script>
-</body>
-    </html>
+            l
