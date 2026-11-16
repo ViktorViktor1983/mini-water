@@ -339,4 +339,182 @@
         const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
         cardElements.forEach(el => {
             let cardLongPress = false;
-            l
+            let cardTimer = null;
+
+            el.addEventListener('touchstart', (e) => {
+                cardLongPress = false;
+                cardTimer = setTimeout(() => {
+                    cardLongPress = true;
+                    el.innerText = "?";
+                    el.classList.remove("filled", "red");
+                    if (el.classList.contains('board-slot')) {
+                        el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+                    }
+                }, 500);
+            });
+
+            el.addEventListener('touchend', () => {
+                clearTimeout(cardTimer);
+                if (!cardLongPress) {
+                    openInput(el.id);
+                }
+            });
+            el.addEventListener('touchmove', () => clearTimeout(cardTimer));
+        });
+
+        function openInput(id) {
+            currentTargetId = id;
+            document.getElementById('ranks-view').style.display = 'block';
+            document.getElementById('suits-view').classList.remove('active');
+            document.getElementById('input-panel').classList.add('active');
+        }
+
+        function closeInput() {
+            document.getElementById('input-panel').classList.remove('active');
+        }
+
+        function selectRank(rank) {
+            currentRank = rank;
+            document.getElementById('ranks-view').style.display = 'none';
+            document.getElementById('suits-view').classList.add('active');
+        }
+
+        function selectSuit(suit) {
+            let newCardValue = currentRank + suit;
+            let isDuplicate = false;
+
+            cardElements.forEach(el => {
+                if (el.id !== currentTargetId && el.innerText === newCardValue) {
+                    isDuplicate = true;
+                }
+            });
+
+            if (isDuplicate) {
+                alert("Такая карта уже есть!");
+                return;
+            }
+
+            let el = document.getElementById(currentTargetId);
+            el.innerText = newCardValue;
+            el.classList.add("filled");
+            
+            if (el.classList.contains('board-slot')) {
+                el.style.backgroundColor = "var(--card-bg)";
+            }
+
+            if (suit === '♥' || suit === '♦') el.classList.add("red");
+            else el.classList.remove("red");
+
+            closeInput();
+        }
+
+        // --- ЛОГИКА ИГРОКОВ И МЕНЮ ---
+        const seats = document.querySelectorAll('.player-seat, .seat-me');
+        seats.forEach(seat => {
+            let pressTimer = null;
+            let isSeatLongPress = false;
+
+            seat.addEventListener('touchstart', (e) => {
+                isSeatLongPress = false;
+                
+                // Закрываем все другие меню
+                document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+
+                pressTimer = setTimeout(() => {
+                    isSeatLongPress = true;
+                    let chip = seat.querySelector('.chip');
+                    if (chip.style.backgroundColor !== 'var(--chip-red)') {
+                        chip.style.backgroundColor = 'var(--chip-red)';
+                        let cards = seat.querySelector('.player-cards');
+                        if (cards) cards.classList.add('hidden');
+                    } else {
+                        chip.style.backgroundColor = 'var(--chip-blue)';
+                        let cards = seat.querySelector('.player-cards');
+                        if (cards) cards.classList.remove('hidden');
+                    }
+                }, 500);
+            });
+
+            seat.addEventListener('touchend', (e) => {
+                clearTimeout(pressTimer);
+                if (!isSeatLongPress) {
+                    // Открываем меню для этого игрока
+                    let menu = seat.querySelector('.action-menu');
+                    if (menu) menu.classList.add('active');
+                }
+            });
+            seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
+        });
+
+        // Закрытие меню при клике мимо
+        document.addEventListener('touchstart', (e) => {
+            if (!e.target.closest('.player-seat') && !e.target.closest('.seat-me')) {
+                document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+            }
+        });
+
+        function doAction(seatId, action) {
+            let seat = document.getElementById(seatId);
+            let chip = seat.querySelector('.chip');
+            let cards = seat.querySelector('.player-cards');
+            let badgeCall = document.getElementById('badge-' + seatId + '-call');
+            let badgeRaise = document.getElementById('badge-' + seatId + '-raise');
+
+            // Сброс значков
+            if(badgeCall) badgeCall.classList.remove('show');
+            if(badgeRaise) badgeRaise.classList.remove('show');
+
+            if (action === 'fold') {
+                if (seatId === 'me') {
+                    document.getElementById('my-cards-container').classList.add('hidden');
+                } else {
+                    if (cards) cards.classList.add('hidden');
+                }
+                chip.style.backgroundColor = 'var(--chip-blue)';
+            } 
+            else if (action === 'call') {
+                if (badgeCall) badgeCall.classList.add('show');
+            }
+
+            // Закрываем меню
+            document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+        }
+
+        // --- ЛОГИКА РЕЙЗА (МОДАЛЬНОЕ ОКНО) ---
+        function openRaiseModal(seatId) {
+            targetSeatForRaise = seatId;
+            document.getElementById('raise-input').value = '';
+            document.getElementById('raise-modal').classList.add('active');
+            document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+        }
+
+        function closeRaiseModal(event) {
+            if (event.target.id === 'raise-modal') {
+                document.getElementById('raise-modal').classList.remove('active');
+            }
+        }
+
+        function setRaise(value) {
+            if (value === 'all') {
+                document.getElementById('raise-input').value = 'ALL-IN';
+            } else {
+                document.getElementById('raise-input').value = value;
+            }
+            submitRaise();
+        }
+
+        function submitRaise() {
+            let val = document.getElementById('raise-input').value;
+            if (!val) return;
+
+            let badgeRaise = document.getElementById('badge-' + targetSeatForRaise + '-raise');
+            if (badgeRaise) {
+                badgeRaise.innerText = val;
+                badgeRaise.classList.add('show');
+            }
+            
+            document.getElementById('raise-modal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
