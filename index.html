@@ -75,12 +75,11 @@
             z-index: 12;
         }
 
-        /* Кружки действий - по твоим координатам */
         .action-badge {
             position: absolute;
             width: 18px; height: 18px;
             border-radius: 50%;
-            display: none; /* Скрыты по умолчанию */
+            display: none;
             align-items: center; justify-content: center;
             font-size: 10px; font-weight: bold;
             z-index: 100;
@@ -90,32 +89,32 @@
         .badge-call { background-color: #4caf50; color: white; }
         .badge-raise { background-color: #ff9800; color: black; font-size: 8px; }
 
-        /* Панели действий - по твоим координатам */
         .action-menu {
             position: absolute;
             background-color: rgba(0,0,0,0.9);
             padding: 6px; border-radius: 8px;
-            display: none; /* Скрыты по умолчанию */
-            gap: 6px;
+            display: none; gap: 6px;
             z-index: 100;
             border: 1px dashed rgba(255,255,255,0.3);
         }
         .action-menu.active { display: flex; }
         .action-menu button {
             background: #444; color: white; border: none;
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold; cursor: pointer;
+            padding: 10px 14px; border-radius: 6px;
+            font-size: 14px; font-weight: bold; cursor: pointer;
         }
 
         .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
-        .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; }
+        .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; cursor: pointer;}
+        .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
+        .board-slot.filled.red { color: var(--card-text-red); }
         .separator { width: 10px; }
 
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; transition: opacity 0.3s; }
         .my-cards.hidden { opacity: 0; }
-        .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; }
+        .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s;}
+        .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
+        .my-card-slot.filled.red { color: var(--card-text-red); }
 
         .control-panel {
             background-color: var(--panel-bg);
@@ -158,17 +157,17 @@
         <div class="table-area" id="table-area">
             
             <div class="my-cards" id="my-cards-container">
-                <div class="my-card-slot">?</div>
-                <div class="my-card-slot">?</div>
+                <div class="my-card-slot card-slot" id="slot-1">?</div>
+                <div class="my-card-slot card-slot" id="slot-2">?</div>
             </div>
 
             <div class="board">
-                <div class="board-slot">?</div>
-                <div class="board-slot">?</div>
-                <div class="board-slot">?</div>
+                <div class="board-slot card-slot" id="board-1">?</div>
+                <div class="board-slot card-slot" id="board-2">?</div>
+                <div class="board-slot card-slot" id="board-3">?</div>
                 <div class="separator"></div>
-                <div class="board-slot">?</div>
-                <div class="board-slot">?</div>
+                <div class="board-slot card-slot" id="board-4">?</div>
+                <div class="board-slot card-slot" id="board-5">?</div>
             </div>
 
             <!-- Игроки -->
@@ -209,7 +208,7 @@
                 <div class="chip">Вы</div>
             </div>
 
-            <!-- Панели кнопок (твои координаты) -->
+            <!-- Панели и кружки действий по твоим координатам -->
             <div class="action-menu" id="menu-p1" style="left: 5.8%; top: 13.6%;"><button onclick="doAction('p1', 'fold')">Ф</button><button onclick="doAction('p1', 'call')">К</button><button onclick="openRaiseModal('p1')">Р</button></div>
             <div class="action-menu" id="menu-p2" style="left: 50.9%; top: 13.7%;"><button onclick="doAction('p2', 'fold')">Ф</button><button onclick="doAction('p2', 'call')">К</button><button onclick="openRaiseModal('p2')">Р</button></div>
             <div class="action-menu" id="menu-p3" style="left: 34.3%; top: 23.8%;"><button onclick="doAction('p3', 'fold')">Ф</button><button onclick="doAction('p3', 'call')">К</button><button onclick="openRaiseModal('p3')">Р</button></div>
@@ -220,7 +219,6 @@
             <div class="action-menu" id="menu-p8" style="left: 23.6%; top: 23.6%;"><button onclick="doAction('p8', 'fold')">Ф</button><button onclick="doAction('p8', 'call')">К</button><button onclick="openRaiseModal('p8')">Р</button></div>
             <div class="action-menu" id="menu-me" style="left: 29.2%; top: 61.8%;"><button onclick="doAction('me', 'fold')">Ф</button><button onclick="doAction('me', 'call')">К</button><button onclick="openRaiseModal('me')">Р</button></div>
 
-            <!-- Кружки действий (твои координаты) -->
             <div class="action-badge badge-call" id="badge-call-p1" style="left: 35.0%; top: 4.1%;">✓</div>
             <div class="action-badge badge-raise" id="badge-raise-p1" style="left: 15.3%; top: 4.0%;">3</div>
             <div class="action-badge badge-call" id="badge-call-p2" style="left: 79.5%; top: 3.2%;">✓</div>
@@ -305,7 +303,7 @@
         let currentRank = "";
         let targetSeatForRaise = null;
 
-        const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
+        const cardElements = document.querySelectorAll('.card-slot');
         cardElements.forEach(el => {
             let cardLongPress = false;
             let cardTimer = null;
