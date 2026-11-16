@@ -48,7 +48,6 @@
             overflow: hidden; 
         }
 
-        /* Контейнер игрока */
         .player-seat, .seat-me { 
             position: absolute; 
             display: flex; 
@@ -61,7 +60,6 @@
             height: 40px;
         }
 
-        /* Руки (мини-карты) */
         .player-cards {
             display: flex;
             gap: 2px;
@@ -70,7 +68,6 @@
             z-index: 11;
         }
         
-        /* Позиционирование карт относительно жетона */
         .pos-top { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .pos-left { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 2px; }
         .pos-right { left: 100%; top: 50%; transform: translateY(-50%); margin-left: 2px; }
@@ -86,7 +83,6 @@
             background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
         }
 
-        /* Жетон */
         .chip {
             width: 34px; 
             height: 34px;
@@ -104,7 +100,6 @@
             transition: background-color 0.3s;
         }
 
-        /* Борд */
         .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
         .card, .board-slot { width: 40px; height: 60px; background-color: var(--card-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: var(--card-text-black); box-shadow: 0 4px 8px rgba(0,0,0,0.6); }
         .card.red { color: var(--card-text-red); }
@@ -115,7 +110,6 @@
         
         .separator { width: 10px; }
 
-        /* Мои карты */
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; }
         .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s; }
         .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
@@ -129,7 +123,6 @@
         }
         .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
 
-        /* Панель ввода */
         .input-panel {
             position: absolute; bottom: -100%; left: 0; width: 100%;
             background-color: var(--panel-bg);
@@ -177,7 +170,6 @@
                 <div class="board-slot" id="board-5">?</div>
             </div>
 
-            <!-- Игроки с правильно позиционированными картами -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">1</div>
@@ -261,7 +253,7 @@
         let longPressTimer = null;
         let isLongPress = false;
 
-        // --- ЛОГИКА КАРТ ---
+        // --- ЛОГИКА КАРТ (БЕЗ ИЗМЕНЕНИЙ) ---
         const cardElements = document.querySelectorAll('.my-card-slot, .board-slot');
         cardElements.forEach(el => {
             el.addEventListener('touchstart', (e) => {
@@ -328,7 +320,7 @@
             closeInput();
         }
 
-        // --- ЛОГИКА ИГРОКОВ ---
+        // --- ЛОГИКА ИГРОКОВ (ИСПРАВЛЕНА ПО ТВОЕЙ СХЕМЕ) ---
         const seats = document.querySelectorAll('.player-seat, .seat-me');
         seats.forEach(seat => {
             let pressTimer = null;
@@ -338,27 +330,49 @@
                 isSeatLongPress = false;
                 pressTimer = setTimeout(() => {
                     isSeatLongPress = true;
-                    // Фолд
+                    // Долгое нажатие: Игрок уходит из-за стола
                     let chip = seat.querySelector('.chip');
-                    chip.style.backgroundColor = 'var(--chip-red)';
+                    chip.style.backgroundColor = 'var(--chip-red)'; // Красный
                     let cards = seat.querySelector('.player-cards');
-                    if (cards) cards.classList.add('hidden');
+                    if (cards) cards.classList.add('hidden'); // Карты убираем
                 }, 500);
             });
 
             seat.addEventListener('touchend', () => {
                 clearTimeout(pressTimer);
-                // Возврат в игру
+                
                 if (!isSeatLongPress) {
+                    // Короткое нажатие: Фолд (карты исчезают, цвет остается синим)
                     let chip = seat.querySelector('.chip');
-                    chip.style.backgroundColor = 'var(--chip-blue)';
-                    let cards = seat.querySelector('.player-cards');
-                    if (cards) cards.classList.remove('hidden');
+                    
+                    // Если игрок за столом (синий), просто убираем карты
+                    if (chip.style.backgroundColor !== 'var(--chip-red)') {
+                        let cards = seat.querySelector('.player-cards');
+                        if (cards) cards.classList.add('hidden');
+                    }
                 }
             });
 
             seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
         });
+
+        // Чтобы можно было вернуть игрока за стол, используем двойной клик (или долгое нажатие на красного)
+        // Для этого добавим обработчик, который при долгом нажатии на красного делает его снова синим
+        // Встроим это в логику touchstart
+        seats.forEach(seat => {
+             seat.addEventListener('touchstart', (e) => {
+                 let chip = seat.querySelector('.chip');
+                 // Если он красный, то долгое нажатие вернет его в игру
+                 if (chip.style.backgroundColor === 'var(--chip-red)') {
+                     let timer = setTimeout(() => {
+                         chip.style.backgroundColor = 'var(--chip-blue)';
+                         let cards = seat.querySelector('.player-cards');
+                         if (cards) cards.classList.remove('hidden');
+                     }, 500);
+                     seat.addEventListener('touchend', () => clearTimeout(timer), {once: true});
+                 }
+             });
+        });
     </script>
 </body>
-                                                                               </html>
+                    </html>
