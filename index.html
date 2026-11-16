@@ -70,27 +70,27 @@
             z-index: 12;
         }
 
-        /* Кружки действий - теперь двигаются */
+        /* Кружки действий - подняли z-index, чтобы их можно было взять */
         .action-badge {
             position: absolute;
             width: 18px; height: 18px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 10px; font-weight: bold;
-            z-index: 13;
+            z-index: 100; /* Высокий z-index */
             cursor: grab;
             border: 1px solid #fff;
         }
         .badge-call { background-color: #4caf50; color: white; }
         .badge-raise { background-color: #ff9800; color: black; font-size: 8px; }
 
-        /* Панели действий - теперь двигаются */
+        /* Панели действий - тоже подняли z-index */
         .action-menu {
             position: absolute;
             background-color: rgba(0,0,0,0.9);
             padding: 6px; border-radius: 8px;
             display: flex; gap: 6px;
-            z-index: 30;
+            z-index: 100;
             cursor: grab;
             border: 1px dashed rgba(255,255,255,0.3);
         }
@@ -106,6 +106,7 @@
         .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; }
         .separator { width: 10px; }
 
+        /* Твои карты - уменьшили z-index, чтобы они не перекрывали кружки */
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; }
         .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; }
 
@@ -115,7 +116,6 @@
             flex-shrink: 0;
         }
         
-        /* Модальное окно координат */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 1000;
@@ -149,7 +149,7 @@
                 <div class="board-slot">?</div>
             </div>
 
-            <!-- Игроки (только фишки) -->
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">1</div>
@@ -187,70 +187,33 @@
                 <div class="chip">Вы</div>
             </div>
 
-            <!-- === РЕДАКТОР: ПАНЕЛИ КНОПОК (двигай их) === -->
-            <!-- Панель для P1 -->
-            <div class="action-menu draggable" id="menu-p1" style="left: 20%; top: 15%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P2 -->
-            <div class="action-menu draggable" id="menu-p2" style="left: 70%; top: 15%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P3 -->
-            <div class="action-menu draggable" id="menu-p3" style="left: 70%; top: 35%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P4 -->
-            <div class="action-menu draggable" id="menu-p4" style="left: 70%; top: 60%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P5 -->
-            <div class="action-menu draggable" id="menu-p5" style="left: 70%; top: 85%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P6 -->
-            <div class="action-menu draggable" id="menu-p6" style="left: 10%; top: 85%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P7 -->
-            <div class="action-menu draggable" id="menu-p7" style="left: 10%; top: 60%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для P8 -->
-            <div class="action-menu draggable" id="menu-p8" style="left: 10%; top: 35%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
-            <!-- Панель для Вы -->
-            <div class="action-menu draggable" id="menu-me" style="left: 40%; top: 80%;">
-                <button>Ф</button><button>К</button><button>Р</button>
-            </div>
+            <!-- === РЕДАКТОР === -->
+            <div class="action-menu draggable" id="menu-p1" style="left: 20%; top: 15%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p2" style="left: 70%; top: 15%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p3" style="left: 70%; top: 35%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p4" style="left: 70%; top: 60%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p5" style="left: 70%; top: 85%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p6" style="left: 10%; top: 85%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p7" style="left: 10%; top: 60%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-p8" style="left: 10%; top: 35%;"><button>Ф</button><button>К</button><button>Р</button></div>
+            <div class="action-menu draggable" id="menu-me" style="left: 40%; top: 80%;"><button>Ф</button><button>К</button><button>Р</button></div>
 
-            <!-- === РЕДАКТОР: КРУЖКИ ДЕЙСТВИЙ (двигай их) === -->
-            <!-- Значки для P1 -->
             <div class="action-badge draggable badge-call" id="badge-call-p1" style="left: 30%; top: 10%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p1" style="left: 35%; top: 10%;">3</div>
-            <!-- Значки для P2 -->
             <div class="action-badge draggable badge-call" id="badge-call-p2" style="left: 80%; top: 10%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p2" style="left: 85%; top: 10%;">3</div>
-            <!-- Значки для P3 -->
             <div class="action-badge draggable badge-call" id="badge-call-p3" style="left: 80%; top: 30%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p3" style="left: 85%; top: 30%;">3</div>
-            <!-- Значки для P4 -->
             <div class="action-badge draggable badge-call" id="badge-call-p4" style="left: 80%; top: 55%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p4" style="left: 85%; top: 55%;">3</div>
-            <!-- Значки для P5 -->
             <div class="action-badge draggable badge-call" id="badge-call-p5" style="left: 80%; top: 80%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p5" style="left: 85%; top: 80%;">3</div>
-            <!-- Значки для P6 -->
             <div class="action-badge draggable badge-call" id="badge-call-p6" style="left: 20%; top: 80%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p6" style="left: 25%; top: 80%;">3</div>
-            <!-- Значки для P7 -->
             <div class="action-badge draggable badge-call" id="badge-call-p7" style="left: 20%; top: 55%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p7" style="left: 25%; top: 55%;">3</div>
-            <!-- Значки для P8 -->
             <div class="action-badge draggable badge-call" id="badge-call-p8" style="left: 20%; top: 30%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-p8" style="left: 25%; top: 30%;">3</div>
-            <!-- Значки для Вы -->
             <div class="action-badge draggable badge-call" id="badge-call-me" style="left: 50%; top: 75%;">✓</div>
             <div class="action-badge draggable badge-raise" id="badge-raise-me" style="left: 55%; top: 75%;">3</div>
 
@@ -261,7 +224,6 @@
         <button onclick="saveCoords()" style="background:#4caf50; color:white; padding: 12px 25px; border:none; border-radius:10px; font-size: 16px; font-weight:bold;">СОХРАНИТЬ</button>
     </div>
 
-    <!-- Модальное окно -->
     <div class="modal-overlay" id="modal">
         <button class="close-btn" onclick="document.getElementById('modal').classList.remove('active')">Закрыть</button>
         <div class="modal-content" id="result-text"></div>
@@ -279,7 +241,6 @@
                     isDragging = true;
                     const touch = e.touches[0];
                     const rect = el.getBoundingClientRect();
-                    // Запоминаем смещение пальца
                     initialX = touch.clientX - rect.left;
                     initialY = touch.clientY - rect.top;
                 }, {passive: false});
@@ -291,14 +252,12 @@
                     const table = document.getElementById('table-area');
                     const tableRect = table.getBoundingClientRect();
 
-                    // Вычисляем новые координаты в процентах
                     let newX = touch.clientX - tableRect.left - initialX;
                     let newY = touch.clientY - tableRect.top - initialY;
 
                     let percentX = (newX / tableRect.width) * 100;
                     let percentY = (newY / tableRect.height) * 100;
 
-                    // Ограничиваем
                     percentX = Math.max(0, Math.min(90, percentX));
                     percentY = Math.max(0, Math.min(95, percentY));
 
@@ -324,4 +283,4 @@
         }
     </script>
 </body>
-                                                                                    </html>
+</html>
