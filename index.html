@@ -15,9 +15,8 @@
             --btn-bg: #444444;
             --btn-active: #ff9800;
             
-            /* Цвета жетонов */
-            --chip-blue: #5c9ead; /* Спокойный голубой */
-            --chip-red: #d32f2f;  /* Красный */
+            --chip-blue: #5c9ead; 
+            --chip-red: #d32f2f;  
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
@@ -49,18 +48,17 @@
             overflow: hidden; 
         }
 
-        /* Контейнер игрока (жетон + карты) */
+        /* Контейнер игрока */
         .player-seat, .seat-me { 
             position: absolute; 
             display: flex; 
-            flex-direction: column; 
             align-items: center; 
+            justify-content: center;
             transform: translate(-50%, -50%); 
             z-index: 10;
-            transition: all 0.3s;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
         }
 
         /* Руки (мини-карты) */
@@ -68,9 +66,15 @@
             display: flex;
             gap: 2px;
             position: absolute;
-            top: -20px; /* Сдвигаем карты чуть выше жетона */
             transition: opacity 0.3s;
         }
+        
+        /* Позиционирование карт относительно жетона (чтобы не улетали) */
+        .pos-top { bottom: -25px; } /* Карты под жетоном для верхних игроков */
+        .pos-bottom { top: -25px; } /* Карты над жетоном для нижних */
+        .pos-left { right: -30px; transform: rotate(90deg); }
+        .pos-right { left: -30px; transform: rotate(-90deg); }
+
         .player-cards.hidden { opacity: 0; }
         
         .mini-card {
@@ -88,7 +92,7 @@
             height: 34px;
             background-color: var(--chip-blue);
             border-radius: 50%;
-            border: 3px dashed #fff; /* Пунктирный ободок как у фишек */
+            border: 3px dashed #fff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -173,38 +177,37 @@
                 <div class="board-slot" id="board-5">?</div>
             </div>
 
-            <!-- Игроки -->
-            <!-- Для поворота карт используем inline-стили для .player-cards -->
+            <!-- Игроки с правильно позиционированными картами -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
-                <div class="player-cards" style="transform: rotate(180deg);"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">1</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
-                <div class="player-cards" style="transform: rotate(180deg);"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">2</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
-                <div class="player-cards" style="transform: rotate(-90deg); position: absolute; left: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">3</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
-                <div class="player-cards" style="transform: rotate(-90deg); position: absolute; left: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">4</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
-                <div class="player-cards" style="transform: rotate(-90deg); position: absolute; left: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">5</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
-                <div class="player-cards" style="transform: rotate(90deg); position: absolute; right: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">6</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
-                <div class="player-cards" style="transform: rotate(90deg); position: absolute; right: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">7</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
-                <div class="player-cards" style="transform: rotate(90deg); position: absolute; right: -25px; top: 15px;"><div class="mini-card"></div><div class="mini-card"></div></div>
+                <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip">8</div>
             </div>
 
@@ -335,24 +338,20 @@
                 isSeatLongPress = false;
                 pressTimer = setTimeout(() => {
                     isSeatLongPress = true;
-                    
-                    // Долгое нажатие: Красный (нет игрока) и убираем карты
+                    // Фолд
                     let chip = seat.querySelector('.chip');
                     chip.style.backgroundColor = 'var(--chip-red)';
-                    
                     let cards = seat.querySelector('.player-cards');
                     if (cards) cards.classList.add('hidden');
-                    
                 }, 500);
             });
 
             seat.addEventListener('touchend', () => {
                 clearTimeout(pressTimer);
+                // Возврат в игру
                 if (!isSeatLongPress) {
-                    // Короткое нажатие: Голубой (в игре) и показываем карты
                     let chip = seat.querySelector('.chip');
                     chip.style.backgroundColor = 'var(--chip-blue)';
-                    
                     let cards = seat.querySelector('.player-cards');
                     if (cards) cards.classList.remove('hidden');
                 }
@@ -362,4 +361,4 @@
         });
     </script>
 </body>
-                </html>
+    </html>
