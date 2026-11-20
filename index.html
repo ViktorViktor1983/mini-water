@@ -22,11 +22,18 @@
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         
-        .top-bar { display: flex; justify-content: space-between; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; position: relative; z-index: 20;}
-        
-        .mode-switch { position: absolute; left: 15px; top: 8px; display: flex; background: #111; border-radius: 5px; overflow: hidden; font-size: 12px;}
-        .mode-switch span { padding: 2px 8px; color: #888; cursor: pointer; }
+        /* Верхняя панель */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; position: relative; z-index: 20;}
+        .mode-switch { display: flex; background: #111; border-radius: 5px; overflow: hidden; font-size: 12px;}
+        .mode-switch span { padding: 4px 10px; color: #888; cursor: pointer; }
         .mode-switch span.active { background: #333; color: white; }
+        
+        .top-actions { display: flex; gap: 10px; }
+        .top-actions button { 
+            padding: 6px 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; 
+        }
+        .btn-win { background: #4caf50; color: white; }
+        .btn-lose { background: #d32f2f; color: white; }
 
         .table-container {
             flex: 1;
@@ -58,23 +65,42 @@
             width: 40px; height: 40px;
         }
 
+        /* Карты игроков */
         .player-cards { display: flex; gap: 2px; position: absolute; transition: opacity 0.3s; z-index: 11; }
         .pos-top { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .pos-left { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 2px; }
         .pos-right { left: 100%; top: 50%; transform: translateY(-50%); margin-left: 2px; }
         .player-cards.hidden { opacity: 0; }
-        .mini-card { width: 14px; height: 20px; background-color: #b0b0b0; border: 1px solid #555; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px); }
+        
+        .mini-card { 
+            width: 14px; height: 20px; background-color: #b0b0b0; 
+            border: 1px solid #555; border-radius: 2px; 
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 8px; font-weight: bold; color: transparent;
+        }
+        
+        /* Метка BB */
+        .mini-card.bb-card {
+            background-image: none;
+            background-color: #fff;
+            color: var(--card-text-red);
+            font-size: 10px;
+        }
 
+        /* Фишка (Стек) */
         .chip {
             width: 34px; height: 34px;
             background-color: var(--chip-blue);
             border-radius: 50%; border: 3px dashed #fff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: bold; color: white;
+            font-size: 12px; font-weight: bold; color: white;
             text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             z-index: 12;
+            transition: background-color 0.3s;
         }
 
+        /* Кружки действий */
         .action-badge {
             position: absolute;
             width: 18px; height: 18px;
@@ -89,27 +115,32 @@
         .badge-call { background-color: #4caf50; color: white; }
         .badge-raise { background-color: #ff9800; color: black; font-size: 8px; }
 
+        /* Панели действий */
         .action-menu {
             position: absolute;
             background-color: rgba(0,0,0,0.9);
-            padding: 6px; border-radius: 8px;
-            display: none; gap: 6px;
+            padding: 4px; border-radius: 8px;
+            display: none; gap: 4px;
             z-index: 100;
             border: 1px dashed rgba(255,255,255,0.3);
+            transform: translateX(-50%); /* Центрируем, чтобы не улетало при добавлении кнопки */
         }
         .action-menu.active { display: flex; }
         .action-menu button {
             background: #444; color: white; border: none;
-            padding: 10px 14px; border-radius: 6px;
-            font-size: 14px; font-weight: bold; cursor: pointer;
+            padding: 8px 10px; border-radius: 6px;
+            font-size: 12px; font-weight: bold; cursor: pointer;
         }
+        .action-menu button:active { background: var(--btn-active); color: black; }
 
+        /* Борд */
         .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
         .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; cursor: pointer;}
         .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .board-slot.filled.red { color: var(--card-text-red); }
         .separator { width: 10px; }
 
+        /* Мои карты */
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; transition: opacity 0.3s; }
         .my-cards.hidden { opacity: 0; }
         .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s;}
@@ -121,18 +152,9 @@
             padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .advice-text { font-size: 24px; font-weight: bold; color: #ff9800; text-align: center; }
+        .advice-text { font-size: 20px; font-weight: bold; color: #ff9800; text-align: center; }
 
-        .input-panel { position: absolute; bottom: -100%; left: 0; width: 100%; background-color: var(--panel-bg); border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; z-index: 50; transition: bottom 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
-        .input-panel.active { bottom: 0; }
-        .row { display: flex; gap: 5px; justify-content: center; }
-        .input-btn { flex: 1; padding: 15px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .input-btn:active { background-color: var(--btn-active); color: black; }
-        .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
-        .suits-row.active { display: flex; }
-        .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
-        .suit-btn:active { background-color: var(--btn-active); color: black; }
-
+        /* Модальные окна (Рейз и Стек) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
         .modal-box { background: #222; padding: 20px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #444; }
@@ -142,15 +164,39 @@
         .input-with-btn input { flex: 1; background: transparent; border: none; color: white; font-size: 18px; text-align: center; outline: none; padding: 5px; width: 100%; }
         .input-with-btn button { background: var(--btn-active); color: black; border: none; border-radius: 6px; padding: 8px 15px; font-weight: bold; font-size: 14px; cursor: pointer; margin-left: 5px; }
         
+        /* Сетки быстрых кнопок */
         .quick-bets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
         .quick-bets button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
         .quick-bets button:active { background: var(--btn-active); color: black; }
+
+        .stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .stack-grid button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .stack-grid button:active { background: var(--btn-active); color: black; }
+
+        /* Панель ввода карт */
+        .input-panel { position: absolute; bottom: -100%; left: 0; width: 100%; background-color: var(--panel-bg); border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; z-index: 50; transition: bottom 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
+        .input-panel.active { bottom: 0; }
+        .row { display: flex; gap: 5px; justify-content: center; }
+        .input-btn { flex: 1; padding: 15px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .input-btn:active { background-color: var(--btn-active); color: black; }
+        .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
+        .suits-row.active { display: flex; }
+        .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
+        .suit-btn:active { background-color: var(--btn-active); color: black; }
     </style>
 </head>
 <body>
 
+    <!-- Верхняя панель -->
     <div class="top-bar">
-        <span>Раздача #1</span>
+        <div class="mode-switch">
+            <span class="active">Профи</span>
+            <span>Быстрый</span>
+        </div>
+        <div class="top-actions">
+            <button class="btn-win" onclick="resetRound(true)">🏆 Выигрыш</button>
+            <button class="btn-lose" onclick="resetRound(false)">💀 Проигрыш</button>
+        </div>
     </div>
 
     <div class="table-container">
@@ -173,52 +219,53 @@
             <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">1</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">2</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">3</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">4</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">5</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">6</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">7</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
-                <div class="chip">8</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
 
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
-                <div class="chip">Вы</div>
+                <div class="chip" data-stack="100">100</div>
             </div>
 
-            <!-- Панели и кружки действий по твоим координатам -->
-            <div class="action-menu" id="menu-p1" style="left: 5.8%; top: 13.6%;"><button onclick="doAction('p1', 'fold')">Ф</button><button onclick="doAction('p1', 'call')">К</button><button onclick="openRaiseModal('p1')">Р</button></div>
-            <div class="action-menu" id="menu-p2" style="left: 50.9%; top: 13.7%;"><button onclick="doAction('p2', 'fold')">Ф</button><button onclick="doAction('p2', 'call')">К</button><button onclick="openRaiseModal('p2')">Р</button></div>
-            <div class="action-menu" id="menu-p3" style="left: 34.3%; top: 23.8%;"><button onclick="doAction('p3', 'fold')">Ф</button><button onclick="doAction('p3', 'call')">К</button><button onclick="openRaiseModal('p3')">Р</button></div>
-            <div class="action-menu" id="menu-p4" style="left: 34.3%; top: 51.9%;"><button onclick="doAction('p4', 'fold')">Ф</button><button onclick="doAction('p4', 'call')">К</button><button onclick="openRaiseModal('p4')">Р</button></div>
-            <div class="action-menu" id="menu-p5" style="left: 56.1%; top: 90.0%;"><button onclick="doAction('p5', 'fold')">Ф</button><button onclick="doAction('p5', 'call')">К</button><button onclick="openRaiseModal('p5')">Р</button></div>
-            <div class="action-menu" id="menu-p6" style="left: 3.2%; top: 90.5%;"><button onclick="doAction('p6', 'fold')">Ф</button><button onclick="doAction('p6', 'call')">К</button><button onclick="openRaiseModal('p6')">Р</button></div>
-            <div class="action-menu" id="menu-p7" style="left: 23.0%; top: 51.6%;"><button onclick="doAction('p7', 'fold')">Ф</button><button onclick="doAction('p7', 'call')">К</button><button onclick="openRaiseModal('p7')">Р</button></div>
-            <div class="action-menu" id="menu-p8" style="left: 23.6%; top: 23.6%;"><button onclick="doAction('p8', 'fold')">Ф</button><button onclick="doAction('p8', 'call')">К</button><button onclick="openRaiseModal('p8')">Р</button></div>
-            <div class="action-menu" id="menu-me" style="left: 29.2%; top: 61.8%;"><button onclick="doAction('me', 'fold')">Ф</button><button onclick="doAction('me', 'call')">К</button><button onclick="openRaiseModal('me')">Р</button></div>
+            <!-- Панели действий (с кнопкой S) -->
+            <div class="action-menu" id="menu-p1" style="left: 5.8%; top: 13.6%;"><button onclick="doAction('p1', 'fold')">Ф</button><button onclick="doAction('p1', 'call')">К</button><button onclick="openRaiseModal('p1')">Р</button><button onclick="openStackModal('p1')">S</button></div>
+            <div class="action-menu" id="menu-p2" style="left: 50.9%; top: 13.7%;"><button onclick="doAction('p2', 'fold')">Ф</button><button onclick="doAction('p2', 'call')">К</button><button onclick="openRaiseModal('p2')">Р</button><button onclick="openStackModal('p2')">S</button></div>
+            <div class="action-menu" id="menu-p3" style="left: 34.3%; top: 23.8%;"><button onclick="doAction('p3', 'fold')">Ф</button><button onclick="doAction('p3', 'call')">К</button><button onclick="openRaiseModal('p3')">Р</button><button onclick="openStackModal('p3')">S</button></div>
+            <div class="action-menu" id="menu-p4" style="left: 34.3%; top: 51.9%;"><button onclick="doAction('p4', 'fold')">Ф</button><button onclick="doAction('p4', 'call')">К</button><button onclick="openRaiseModal('p4')">Р</button><button onclick="openStackModal('p4')">S</button></div>
+            <div class="action-menu" id="menu-p5" style="left: 56.1%; top: 90.0%;"><button onclick="doAction('p5', 'fold')">Ф</button><button onclick="doAction('p5', 'call')">К</button><button onclick="openRaiseModal('p5')">Р</button><button onclick="openStackModal('p5')">S</button></div>
+            <div class="action-menu" id="menu-p6" style="left: 3.2%; top: 90.5%;"><button onclick="doAction('p6', 'fold')">Ф</button><button onclick="doAction('p6', 'call')">К</button><button onclick="openRaiseModal('p6')">Р</button><button onclick="openStackModal('p6')">S</button></div>
+            <div class="action-menu" id="menu-p7" style="left: 23.0%; top: 51.6%;"><button onclick="doAction('p7', 'fold')">Ф</button><button onclick="doAction('p7', 'call')">К</button><button onclick="openRaiseModal('p7')">Р</button><button onclick="openStackModal('p7')">S</button></div>
+            <div class="action-menu" id="menu-p8" style="left: 23.6%; top: 23.6%;"><button onclick="doAction('p8', 'fold')">Ф</button><button onclick="doAction('p8', 'call')">К</button><button onclick="openRaiseModal('p8')">Р</button><button onclick="openStackModal('p8')">S</button></div>
+            <div class="action-menu" id="menu-me" style="left: 29.2%; top: 61.8%;"><button onclick="doAction('me', 'fold')">Ф</button><button onclick="doAction('me', 'call')">К</button><button onclick="openRaiseModal('me')">Р</button><button onclick="openStackModal('me')">S</button></div>
 
+            <!-- Кружки действий -->
             <div class="action-badge badge-call" id="badge-call-p1" style="left: 35.0%; top: 4.1%;">✓</div>
             <div class="action-badge badge-raise" id="badge-raise-p1" style="left: 15.3%; top: 4.0%;">3</div>
             <div class="action-badge badge-call" id="badge-call-p2" style="left: 79.5%; top: 3.2%;">✓</div>
@@ -245,6 +292,7 @@
         <div class="advice-text">Ожидание хода...</div>
     </div>
 
+    <!-- Окно ввода карт -->
     <div class="input-panel" id="input-panel">
         <button class="close-btn" onclick="closeInput()" style="background:#d32f2f; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; margin-bottom:10px;">Отмена</button>
         <div id="ranks-view">
@@ -276,6 +324,7 @@
         </div>
     </div>
 
+    <!-- Модальное окно Рейза -->
     <div class="modal-overlay" id="raise-modal" onclick="closeRaiseModal(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
             <h3>Размер рейза (BB)</h3>
@@ -298,11 +347,41 @@
         </div>
     </div>
 
+    <!-- Модальное окно Стека (S) -->
+    <div class="modal-overlay" id="stack-modal" onclick="closeStackModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3>Размер стека (BB)</h3>
+            <div class="input-with-btn">
+                <input type="number" id="stack-input" placeholder="0">
+                <button onclick="submitStack()">ОК</button>
+            </div>
+            <!-- Сетка 0-9 в 2 ряда -->
+            <div class="stack-grid">
+                <button onclick="setStack(0)">0</button>
+                <button onclick="setStack(1)">1</button>
+                <button onclick="setStack(2)">2</button>
+                <button onclick="setStack(3)">3</button>
+                <button onclick="setStack(4)">4</button>
+                <button onclick="setStack(5)">5</button>
+                <button onclick="setStack(6)">6</button>
+                <button onclick="setStack(7)">7</button>
+                <button onclick="setStack(8)">8</button>
+                <button onclick="setStack(9)">9</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentTargetId = null;
         let currentRank = "";
         let targetSeatForRaise = null;
+        let targetSeatForStack = null;
 
+        // Порядок мест по часовой стрелке
+        const seatOrder = ['p1', 'p2', 'p3', 'p4', 'p5', 'me', 'p6', 'p7', 'p8'];
+        let currentBBSeat = 'p1'; // Начальный BB
+
+        // --- ЛОГИКА КАРТ ---
         const cardElements = document.querySelectorAll('.card-slot');
         cardElements.forEach(el => {
             let cardLongPress = false;
@@ -373,22 +452,28 @@
             closeInput();
         }
 
+        // --- ЛОГИКА ИГРОКОВ (Тройное нажатие, цвета, меню) ---
         const seats = document.querySelectorAll('.player-seat, .seat-me');
         seats.forEach(seat => {
-            let pressTimer = null;
-            let isSeatLongPress = false;
+            let tapCount = 0;
+            let tapTimer = null;
+            let longPressTimer = null;
+            let isLongPress = false;
 
             seat.addEventListener('touchstart', (e) => {
-                isSeatLongPress = false;
+                isLongPress = false;
                 document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
 
-                pressTimer = setTimeout(() => {
-                    isSeatLongPress = true;
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
                     let chip = seat.querySelector('.chip');
                     if (chip.style.backgroundColor !== 'var(--chip-red)') {
                         chip.style.backgroundColor = 'var(--chip-red)';
                         let cards = seat.querySelector('.player-cards');
                         if (cards) cards.classList.add('hidden');
+                        // Если ушедший игрок был BB, сбрасываем BB
+                        if (seat.id === currentBBSeat) currentBBSeat = null; 
+                        updateBBVisual();
                     } else {
                         chip.style.backgroundColor = 'var(--chip-blue)';
                         let cards = seat.querySelector('.player-cards');
@@ -398,13 +483,29 @@
             });
 
             seat.addEventListener('touchend', (e) => {
-                clearTimeout(pressTimer);
-                if (!isSeatLongPress) {
-                    let menu = document.getElementById('menu-' + seat.id);
-                    if (menu) menu.classList.add('active');
+                clearTimeout(longPressTimer);
+                
+                if (!isLongPress) {
+                    tapCount++;
+                    if (tapCount === 1) {
+                        tapTimer = setTimeout(() => {
+                            // Одиночное нажатие - открываем меню
+                            let menu = document.getElementById('menu-' + seat.id);
+                            if (menu) menu.classList.add('active');
+                            tapCount = 0;
+                        }, 300);
+                    } else if (tapCount === 3) {
+                        // Тройное нажатие - ставим BB
+                        clearTimeout(tapTimer);
+                        setBB(seat.id);
+                        tapCount = 0;
+                    }
                 }
             });
-            seat.addEventListener('touchmove', () => clearTimeout(pressTimer));
+            
+            seat.addEventListener('touchmove', () => {
+                clearTimeout(longPressTimer);
+            });
         });
 
         document.addEventListener('touchstart', (e) => {
@@ -436,6 +537,7 @@
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
         }
 
+        // --- ЛОГИКА РЕЙЗА ---
         function openRaiseModal(seatId) {
             targetSeatForRaise = seatId;
             document.getElementById('raise-input').value = '';
@@ -468,6 +570,116 @@
                 badgeRaise.classList.add('show');
             }
             document.getElementById('raise-modal').classList.remove('active');
+        }
+
+        // --- ЛОГИКА СТЕКА (S) ---
+        function openStackModal(seatId) {
+            targetSeatForStack = seatId;
+            let seat = document.getElementById(seatId);
+            let currentStack = seat.querySelector('.chip').getAttribute('data-stack');
+            document.getElementById('stack-input').value = currentStack || '100';
+            document.getElementById('stack-modal').classList.add('active');
+            document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+        }
+
+        function closeStackModal(event) {
+            if (event.target.id === 'stack-modal') {
+                document.getElementById('stack-modal').classList.remove('active');
+            }
+        }
+
+        function setStack(num) {
+            let input = document.getElementById('stack-input');
+            if (input.value === '0' || input.value === '') {
+                input.value = num;
+            } else {
+                input.value += num;
+            }
+        }
+
+        function submitStack() {
+            let val = document.getElementById('stack-input').value;
+            if (!val) return;
+
+            let seat = document.getElementById(targetSeatForStack);
+            let chip = seat.querySelector('.chip');
+            chip.setAttribute('data-stack', val);
+            chip.innerText = val;
+            
+            document.getElementById('stack-modal').classList.remove('active');
+        }
+
+        // --- ЛОГИКА БЛАЙНДОВ ---
+        function setBB(seatId) {
+            let seat = document.getElementById(seatId);
+            let chip = seat.querySelector('.chip');
+            
+            // Игнорируем, если место пустое (красное)
+            if (chip.style.backgroundColor === 'var(--chip-red)') return;
+
+            currentBBSeat = seatId;
+            updateBBVisual();
+        }
+
+        function updateBBVisual() {
+            // Убираем старые метки
+            document.querySelectorAll('.mini-card').forEach(card => {
+                card.classList.remove('bb-card');
+                card.innerText = '';
+            });
+
+            // Ставим новую
+            if (currentBBSeat) {
+                let seat = document.getElementById(currentBBSeat);
+                let cards = seat.querySelectorAll('.mini-card');
+                cards.forEach(card => {
+                    card.classList.add('bb-card');
+                    card.innerText = 'BB';
+                });
+            }
+        }
+
+        // --- НОВАЯ РАЗДАЧА ---
+        function resetRound(isWin) {
+            // 1. Сброс карт
+            cardElements.forEach(el => {
+                el.innerText = "?";
+                el.classList.remove("filled", "red");
+                if (el.classList.contains('board-slot')) {
+                    el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+                }
+            });
+            document.getElementById('my-cards-container').classList.remove('hidden');
+
+            // 2. Сброс игроков (только карты и значки, цвета остаются как были)
+            seats.forEach(seat => {
+                let cards = seat.querySelector('.player-cards');
+                if (cards && seat.id !== 'me') cards.classList.remove('hidden');
+            });
+            
+            document.querySelectorAll('.action-badge').forEach(b => b.classList.remove('show'));
+
+            // 3. Перемещение BB
+            if (!currentBBSeat || document.getElementById(currentBBSeat).querySelector('.chip').style.backgroundColor === 'var(--chip-red)') {
+                // Если BB нет или он ушел, ищем первого синего с начала
+                currentBBSeat = seatOrder.find(id => document.getElementById(id).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)');
+            } else {
+                // Ищем следующего синего по часовой стрелке
+                let currentIndex = seatOrder.indexOf(currentBBSeat);
+                for (let i = 1; i <= seatOrder.length; i++) {
+                    let nextIndex = (currentIndex + i) % seatOrder.length;
+                    let nextSeatId = seatOrder[nextIndex];
+                    if (document.getElementById(nextSeatId).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)') {
+                        currentBBSeat = nextSeatId;
+                        break;
+                    }
+                }
+            }
+            
+            updateBBVisual();
+
+            // (В будущем: логика добавления/убавления банка)
+            console.log("Новая раздача. Выигрыш:", isWin);
         }
     </script>
 </body>
