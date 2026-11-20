@@ -15,7 +15,6 @@
             --btn-bg: #444444;
             --btn-active: #ff9800;
             --active-green: #4caf50;
-            
             --chip-blue: #5c9ead; 
             --chip-red: #d32f2f;  
         }
@@ -23,26 +22,25 @@
         html, body { height: 100%; overflow: hidden; background-color: var(--bg-color); color: white; }
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         
+        /* Верхняя панель */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background-color: #222; font-size: 12px; border-bottom: 1px solid #444; flex-shrink: 0; z-index: 20; gap: 5px;}
         .switch-group { display: flex; background: #111; border-radius: 5px; overflow: hidden; border: 1px solid #333;}
         .switch-group span { padding: 6px 10px; color: #888; cursor: pointer; transition: 0.2s;}
         .switch-group span.active { background: var(--active-green); color: white; font-weight: bold;}
+        
         .top-actions { display: flex; gap: 5px; }
         .top-actions button { padding: 6px 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .btn-edit { background: #ff9800; color: black; }
+        .btn-cancel { background: #9e9e9e; color: black; display: none; }
         .btn-win { background: #4caf50; color: white; }
         .btn-lose { background: #d32f2f; color: white; }
-        .btn-edit { background: #ff9800; color: black; }
 
         .table-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 5px; }
         .table-area { width: 100%; max-width: 60vh; max-height: 100%; aspect-ratio: 2 / 3; background-color: var(--table-color); border-radius: 70px; border: 6px solid #4a2c12; position: relative; overflow: hidden; }
 
-        .pot-display {
-            position: absolute; top: 33%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 10px;
-            font-size: 14px; font-weight: bold; color: #ffd700; z-index: 5;
-        }
+        .pot-display { position: absolute; top: 33%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 10px; font-size: 14px; font-weight: bold; color: #ffd700; z-index: 5; }
 
-        .player-seat, .seat-me { position: absolute; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); z-index: 10; width: 40px; height: 40px; }
+        .player-seat, .seat-me { position: absolute; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); z-index: 10; width: 40px; height: 40px; cursor: pointer; }
         .player-cards { display: flex; gap: 2px; position: absolute; transition: opacity 0.3s; z-index: 11; }
         .pos-top { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .pos-left { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 2px; }
@@ -68,8 +66,8 @@
         .action-menu button { background: #444; color: white; border: none; padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
         .action-menu button:active { background: var(--btn-active); color: black; }
 
-        .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
-        .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; cursor: pointer;}
+        .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
+        .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; pointer-events: auto; cursor: pointer;}
         .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .board-slot.filled.red { color: var(--card-text-red); }
         .separator { width: 10px; }
@@ -87,6 +85,7 @@
         .modal-overlay.active { display: flex; }
         .modal-box { background: #222; padding: 20px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #444; }
         .modal-box h3 { margin-bottom: 15px; font-size: 18px; }
+        .modal-box p { font-size: 13px; color: #ccc; margin-bottom: 15px; line-height: 1.4; text-align: left;}
         
         .input-with-btn { display: flex; align-items: center; background: #111; border: 1px solid #555; border-radius: 8px; padding: 5px; margin-bottom: 15px; }
         .input-with-btn input { flex: 1; background: transparent; border: none; color: white; font-size: 18px; text-align: center; outline: none; padding: 5px; width: 100%; }
@@ -104,6 +103,14 @@
         .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
         .suits-row.active { display: flex; }
         .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
+        
+        .profile-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 40vh; overflow-y: auto;}
+        .profile-item { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 10px; border-radius: 8px; }
+        .profile-item button { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .profile-item button.del { background: #d32f2f; margin-left: 5px; }
+        
+        .checkbox-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 15px; font-size: 13px; color: #aaa;}
+        .checkbox-row input { width: 18px; height: 18px; }
     </style>
 </head>
 <body>
@@ -113,12 +120,9 @@
             <span class="active">Кэш</span>
             <span>Турнир</span>
         </div>
-        <div class="switch-group">
-            <span class="active">Профи</span>
-            <span>Быстрый</span>
-        </div>
         <div class="top-actions">
-            <button class="btn-edit" onclick="toggleEditMode()" id="edit-btn">Ред.</button>
+            <button class="btn-cancel" id="cancel-btn" onclick="cancelEdit()">Отмена</button>
+            <button class="btn-edit" id="edit-btn" onclick="handleEditClick()">Ред.</button>
             <button class="btn-win" onclick="resetRound(true)">🏆</button>
             <button class="btn-lose" onclick="resetRound(false)">💀</button>
         </div>
@@ -143,6 +147,7 @@
                 <div class="board-slot card-slot" id="board-5">?</div>
             </div>
 
+            <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
                 <div class="dealer-mark" id="dealer-p1">D</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
@@ -189,7 +194,7 @@
                 <div class="chip" data-stack="100">100</div>
             </div>
 
-            <!-- Панели действий с латинскими буквами и ТВОИМИ координатами -->
+            <!-- Панели действий -->
             <div class="action-menu" id="menu-p1" style="left: 26.8%; top: 13.3%;"><button onclick="doAction('p1', 'fold')">F</button><button onclick="doAction('p1', 'call')">C</button><button onclick="openRaiseModal('p1')">R</button><button onclick="openStackModal('p1')">S</button></div>
             <div class="action-menu" id="menu-p2" style="left: 73.5%; top: 13.2%;"><button onclick="doAction('p2', 'fold')">F</button><button onclick="doAction('p2', 'call')">C</button><button onclick="openRaiseModal('p2')">R</button><button onclick="openStackModal('p2')">S</button></div>
             <div class="action-menu" id="menu-p3" style="left: 81.5%; top: 33.7%;"><button onclick="doAction('p3', 'fold')">F</button><button onclick="doAction('p3', 'call')">C</button><button onclick="openRaiseModal('p3')">R</button><button onclick="openStackModal('p3')">S</button></div>
@@ -288,25 +293,52 @@
                 <button onclick="submitStack()">ОК</button>
             </div>
             <div class="stack-grid">
-                <button onclick="setStack(0)">0</button>
-                <button onclick="setStack(1)">1</button>
-                <button onclick="setStack(2)">2</button>
-                <button onclick="setStack(3)">3</button>
-                <button onclick="setStack(4)">4</button>
-                <button onclick="setStack(5)">5</button>
-                <button onclick="setStack(6)">6</button>
-                <button onclick="setStack(7)">7</button>
-                <button onclick="setStack(8)">8</button>
-                <button onclick="setStack(9)">9</button>
+                <button onclick="setStack(0)">0</button><button onclick="setStack(1)">1</button>
+                <button onclick="setStack(2)">2</button><button onclick="setStack(3)">3</button>
+                <button onclick="setStack(4)">4</button><button onclick="setStack(5)">5</button>
+                <button onclick="setStack(6)">6</button><button onclick="setStack(7)">7</button>
+                <button onclick="setStack(8)">8</button><button onclick="setStack(9)">9</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="coords-modal">
-        <div class="modal-box" style="max-height: 80vh; overflow-y: auto;">
-            <h3>Координаты панелей</h3>
-            <div class="modal-content" id="coords-text" style="background:#111; padding:10px; border-radius:8px; font-family:monospace; font-size:12px; color:#4caf50; text-align:left; white-space:pre-wrap; margin-bottom:15px;"></div>
-            <button onclick="document.getElementById('coords-modal').classList.remove('active')" style="padding:10px 20px; border-radius:8px; background:#ff9800; color:black; border:none; font-weight:bold; width:100%;">Закрыть</button>
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3>Профили столов</h3>
+            <div class="profile-list" id="profile-list"></div>
+            <button onclick="promptNewProfile()" style="width:100%; padding:12px; background:#2196f3; color:white; border:none; border-radius:8px; font-weight:bold; margin-bottom:10px;">+ Добавить профиль</button>
+            <button onclick="document.getElementById('profile-modal').classList.remove('active')" style="width:100%; padding:12px; background:#444; color:white; border:none; border-radius:8px; font-weight:bold;">Закрыть</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="prompt-modal">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3>Название профиля</h3>
+            <div class="input-with-btn">
+                <input type="text" id="profile-name-input" placeholder="Например, 6-max">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="document.getElementById('prompt-modal').classList.remove('active')" style="flex:1; padding:12px; background:#444; color:white; border:none; border-radius:8px; font-weight:bold;">Отмена</button>
+                <button onclick="saveProfile()" style="flex:1; padding:12px; background:#4caf50; color:white; border:none; border-radius:8px; font-weight:bold;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- НОВОЕ ОКНО: Инструкция для редактора -->
+    <div class="modal-overlay" id="edit-info-modal">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3>Редактор стола</h3>
+            <p>Добро пожаловать в режим редактирования!</p>
+            <p>1. Вы можете двигать фишки игроков и кнопки (F, C, R, S) как вам удобно.</p>
+            <p>2. Чтобы <b>удалить</b> игрока, сделайте <b>3 быстрых нажатия</b> по его фишке. (Тапните еще 3 раза, чтобы вернуть).</p>
+            <p>3. Нажмите <b>«Сохранить»</b>, чтобы запомнить этот стол под своим именем (например, 6-max), или <b>«Отмена»</b>, чтобы вернуть всё как было.</p>
+            
+            <div class="checkbox-row">
+                <input type="checkbox" id="dont-show-edit-info">
+                <label for="dont-show-edit-info">Больше не показывать</label>
+            </div>
+            
+            <button onclick="closeEditInfo()" style="width:100%; padding:12px; background:#4caf50; color:white; border:none; border-radius:8px; font-weight:bold;">Понятно</button>
         </div>
     </div>
 
@@ -316,11 +348,15 @@
         let targetSeatForRaise = null;
         let targetSeatForStack = null;
         let editMode = false;
+        
+        // Состояние до входа в редактор (для кнопки Отмена)
+        let preEditState = null;
 
         // Логика ставок
         let pot = 0;
         let currentBet = 0; 
         let playerBets = {}; 
+        let lastActionSeat = null; // Для авто-фолда
 
         const seatOrder = ['p1', 'p2', 'p3', 'p4', 'p5', 'me', 'p6', 'p7', 'p8'];
         let currentBBSeat = 'p1';
@@ -338,28 +374,96 @@
             document.getElementById('pot-display').innerText = `Пот: ${pot.toFixed(1).replace('.0', '')} BB`;
         }
 
-        // --- УПРАВЛЕНИЕ РЕЖИМОМ РЕДАКТОРА ---
-        function toggleEditMode() {
-            editMode = !editMode;
-            const btn = document.getElementById('edit-btn');
-            const menus = document.querySelectorAll('.action-menu');
-            if (editMode) {
-                btn.innerText = 'Сохранить'; btn.style.background = '#4caf50';
-                menus.forEach(m => { m.classList.add('draggable'); makeDraggable(m); });
+        // --- СИСТЕМА ПРОФИЛЕЙ И РЕДАКТОР ---
+        function handleEditClick() {
+            if (!editMode) {
+                // Проверяем, надо ли показывать инструкцию
+                if (localStorage.getItem('hideEditInfo') !== 'true') {
+                    document.getElementById('edit-info-modal').classList.add('active');
+                } else {
+                    enterEditMode();
+                }
             } else {
-                btn.innerText = 'Ред.'; btn.style.background = '#ff9800';
-                menus.forEach(m => m.classList.remove('draggable'));
-                saveCoords();
+                promptNewProfile();
             }
         }
+
+        function closeEditInfo() {
+            if (document.getElementById('dont-show-edit-info').checked) {
+                localStorage.setItem('hideEditInfo', 'true');
+            }
+            document.getElementById('edit-info-modal').classList.remove('active');
+            enterEditMode();
+        }
+
+        function enterEditMode() {
+            // Делаем снимок состояния для Отмены
+            preEditState = {
+                menuPositions: {},
+                playerPositions: {}
+            };
+            document.querySelectorAll('.action-menu').forEach(m => {
+                preEditState.menuPositions[m.id] = { left: m.style.left, top: m.style.top };
+            });
+            document.querySelectorAll('.player-seat, .seat-me').forEach(p => {
+                preEditState.playerPositions[p.id] = { left: p.style.left, top: p.style.top, display: p.style.display };
+            });
+
+            editMode = true;
+            document.getElementById('edit-btn').innerText = 'Сохранить';
+            document.getElementById('edit-btn').style.background = '#4caf50';
+            document.getElementById('cancel-btn').style.display = 'block';
+
+            document.querySelectorAll('.action-menu').forEach(m => {
+                m.classList.add('draggable');
+                makeDraggable(m);
+            });
+            document.querySelectorAll('.player-seat, .seat-me').forEach(p => {
+                makePlayerDraggable(p);
+            });
+        }
+
+        function cancelEdit() {
+            if (!preEditState) return;
+            
+            // Восстанавливаем позиции меню
+            for (let id in preEditState.menuPositions) {
+                let el = document.getElementById(id);
+                if (el) { el.style.left = preEditState.menuPositions[id].left; el.style.top = preEditState.menuPositions[id].top; }
+            }
+            // Восстанавливаем позиции и видимость игроков
+            for (let id in preEditState.playerPositions) {
+                let el = document.getElementById(id);
+                if (el) { 
+                    el.style.left = preEditState.playerPositions[id].left; 
+                    el.style.top = preEditState.playerPositions[id].top; 
+                    el.style.display = preEditState.playerPositions[id].display;
+                }
+            }
+
+            exitEditMode();
+        }
+
+        function exitEditMode() {
+            editMode = false;
+            preEditState = null;
+            document.getElementById('edit-btn').innerText = 'Ред.';
+            document.getElementById('edit-btn').style.background = '#ff9800';
+            document.getElementById('cancel-btn').style.display = 'none';
+            document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('draggable'));
+            document.getElementById('profile-modal').classList.remove('active');
+            document.getElementById('prompt-modal').classList.remove('active');
+        }
+
         function makeDraggable(el) {
             let initialX, initialY, isDragging = false;
             el.addEventListener('touchstart', (e) => {
+                if (!editMode) return;
                 isDragging = true; const touch = e.touches[0]; const rect = el.getBoundingClientRect();
                 initialX = touch.clientX - rect.left; initialY = touch.clientY - rect.top;
             }, {passive: false});
             el.addEventListener('touchmove', (e) => {
-                if (!isDragging) return; e.preventDefault(); const touch = e.touches[0];
+                if (!isDragging || !editMode) return; e.preventDefault(); const touch = e.touches[0];
                 const table = document.getElementById('table-area'); const tableRect = table.getBoundingClientRect();
                 let newX = touch.clientX - tableRect.left - initialX; let newY = touch.clientY - tableRect.top - initialY;
                 let percentX = (newX / tableRect.width) * 100; let percentY = (newY / tableRect.height) * 100;
@@ -368,13 +472,114 @@
             }, {passive: false});
             el.addEventListener('touchend', () => { isDragging = false; });
         }
-        function saveCoords() {
-            let result = "";
-            document.querySelectorAll('.action-menu').forEach(m => {
-                result += m.id + ": left: " + parseFloat(m.style.left).toFixed(1) + "%, top: " + parseFloat(m.style.top).toFixed(1) + "%;\n";
+
+        function makePlayerDraggable(el) {
+            let initialX, initialY, isDragging = false;
+            let tapCount = 0;
+            let tapTimer = null;
+
+            el.addEventListener('touchstart', (e) => {
+                if (!editMode) return;
+                isDragging = true; const touch = e.touches[0]; const rect = el.getBoundingClientRect();
+                initialX = touch.clientX - rect.left; initialY = touch.clientY - rect.top;
+            }, {passive: false});
+
+            el.addEventListener('touchmove', (e) => {
+                if (!isDragging || !editMode) return; e.preventDefault(); const touch = e.touches[0];
+                const table = document.getElementById('table-area'); const tableRect = table.getBoundingClientRect();
+                let newX = touch.clientX - tableRect.left - initialX; let newY = touch.clientY - tableRect.top - initialY;
+                let percentX = (newX / tableRect.width) * 100; let percentY = (newY / tableRect.height) * 100;
+                percentX = Math.max(0, Math.min(95, percentX)); percentY = Math.max(0, Math.min(95, percentY));
+                el.style.left = percentX + '%'; el.style.top = percentY + '%';
+            }, {passive: false});
+
+            el.addEventListener('touchend', (e) => {
+                isDragging = false;
+                if (!editMode) return;
+                
+                if (!isDragging) {
+                    tapCount++;
+                    if (tapCount === 3) {
+                        clearTimeout(tapTimer);
+                        el.style.display = 'none'; // Удаляем
+                        tapCount = 0;
+                    } else {
+                        clearTimeout(tapTimer);
+                        tapTimer = setTimeout(() => { tapCount = 0; }, 500);
+                    }
+                }
             });
-            document.getElementById('coords-text').innerText = result;
-            document.getElementById('coords-modal').classList.add('active');
+        }
+
+        function promptNewProfile() {
+            document.getElementById('profile-name-input').value = '';
+            document.getElementById('prompt-modal').classList.add('active');
+        }
+
+        function saveProfile() {
+            let name = document.getElementById('profile-name-input').value;
+            if (!name) return;
+
+            let profile = { menus: {}, players: {} };
+            document.querySelectorAll('.action-menu').forEach(m => {
+                profile.menus[m.id] = { left: m.style.left, top: m.style.top };
+            });
+            document.querySelectorAll('.player-seat, .seat-me').forEach(p => {
+                profile.players[p.id] = { left: p.style.left, top: p.style.top, display: p.style.display };
+            });
+
+            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
+            profiles[name] = profile;
+            localStorage.setItem('pokerProfiles', JSON.stringify(profiles));
+
+            alert("Профиль '" + name + "' сохранен!");
+            exitEditMode();
+        }
+
+        function openProfilesList() {
+            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
+            let list = document.getElementById('profile-list');
+            list.innerHTML = '';
+            
+            let keys = Object.keys(profiles);
+            if (keys.length === 0) {
+                list.innerHTML = '<p style="color:#888;">Нет сохраненных профилей</p>';
+            } else {
+                keys.forEach(name => {
+                    let div = document.createElement('div');
+                    div.className = 'profile-item';
+                    div.innerHTML = `<span>${name}</span>
+                        <div>
+                            <button onclick="loadProfile('${name}')">Загрузить</button>
+                            <button class="del" onclick="deleteProfile('${name}')">X</button>
+                        </div>`;
+                    list.appendChild(div);
+                });
+            }
+            document.getElementById('profile-modal').classList.add('active');
+        }
+
+        function loadProfile(name) {
+            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
+            let profile = profiles[name];
+            if (!profile) return;
+
+            for (let id in profile.menus) {
+                let el = document.getElementById(id);
+                if (el) { el.style.left = profile.menus[id].left; el.style.top = profile.menus[id].top; }
+            }
+            for (let id in profile.players) {
+                let el = document.getElementById(id);
+                if (el) { el.style.left = profile.players[id].left; el.style.top = profile.players[id].top; el.style.display = profile.players[id].display; }
+            }
+            document.getElementById('profile-modal').classList.remove('active');
+        }
+
+        function deleteProfile(name) {
+            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
+            delete profiles[name];
+            localStorage.setItem('pokerProfiles', JSON.stringify(profiles));
+            openProfilesList();
         }
 
         // --- КАРТЫ ---
@@ -411,7 +616,7 @@
             closeInput();
         }
 
-        // --- ИГРОКИ ---
+        // --- ИГРОКИ (КЛИКИ И АВТО-ФОЛД) ---
         const seats = document.querySelectorAll('.player-seat, .seat-me');
         seats.forEach(seat => {
             let tapCount = 0; let tapTimer = null; let longPressTimer = null; let isLongPress = false;
@@ -435,7 +640,11 @@
                 if (!isLongPress && !editMode) {
                     tapCount++;
                     if (tapCount === 1) {
-                        tapTimer = setTimeout(() => { let menu = document.getElementById('menu-' + seat.id); if (menu) menu.classList.add('active'); tapCount = 0; }, 300);
+                        tapTimer = setTimeout(() => { 
+                            let menu = document.getElementById('menu-' + seat.id); 
+                            if (menu) menu.classList.add('active'); 
+                            tapCount = 0; 
+                        }, 300);
                     } else if (tapCount === 3) { clearTimeout(tapTimer); setBB(seat.id); tapCount = 0; }
                 }
             });
@@ -447,7 +656,48 @@
             }
         });
 
-        // --- ДЕЙСТВИЯ (С ПРАВИЛЬНОЙ МАТЕМАТИКОЙ) ---
+        // --- АВТО-ФОЛД ПРИ ПРОПУСКЕ ---
+        function applyAutoFold(currentSeatId) {
+            if (!lastActionSeat) {
+                lastActionSeat = currentBBSeat;
+            }
+            let startIndex = seatOrder.indexOf(lastActionSeat);
+            let endIndex = seatOrder.indexOf(currentSeatId);
+            
+            if (startIndex < endIndex) {
+                for (let i = startIndex + 1; i < endIndex; i++) {
+                    applyFoldToSeat(seatOrder[i]);
+                }
+            } else {
+                for (let i = startIndex + 1; i < seatOrder.length; i++) {
+                    applyFoldToSeat(seatOrder[i]);
+                }
+                for (let i = 0; i < endIndex; i++) {
+                    applyFoldToSeat(seatOrder[i]);
+                }
+            }
+            lastActionSeat = currentSeatId;
+        }
+
+        function applyFoldToSeat(seatId) {
+            if (seatId === 'me') return;
+            let seat = document.getElementById(seatId);
+            if (seat.style.display === 'none') return; // Пропускаем удаленных
+            
+            let chip = seat.querySelector('.chip');
+            if (chip.style.backgroundColor === 'var(--chip-red)') return;
+            
+            let cards = seat.querySelector('.player-cards');
+            if (cards && cards.classList.contains('hidden')) return;
+
+            if (cards) cards.classList.add('hidden');
+            let badgeCall = document.getElementById('badge-call-' + seatId);
+            let badgeRaise = document.getElementById('badge-raise-' + seatId);
+            if (badgeCall) badgeCall.classList.remove('show');
+            if (badgeRaise) badgeRaise.classList.remove('show');
+        }
+
+        // --- ДЕЙСТВИЯ ---
         function doAction(seatId, action) {
             if(editMode) return;
             let seat = document.getElementById(seatId);
@@ -459,20 +709,19 @@
             if(badgeCall) badgeCall.classList.remove('show');
             if(badgeRaise) badgeRaise.classList.remove('show');
 
+            applyAutoFold(seatId);
+
             if (action === 'fold') {
                 if (seatId === 'me') document.getElementById('my-cards-container').classList.add('hidden');
                 else if (cards) cards.classList.add('hidden');
                 chip.style.backgroundColor = 'var(--chip-blue)';
             } else if (action === 'call') {
                 if (badgeCall) badgeCall.classList.add('show');
-                
-                // Математика колла
                 let myBet = playerBets[seatId] || 0;
                 let amountToCall = currentBet - myBet;
-                
                 if (amountToCall > 0) {
                     let myStack = getStack(seatId);
-                    let pay = Math.min(myStack, amountToCall); // Нельзя поставить больше, чем есть
+                    let pay = Math.min(myStack, amountToCall);
                     setStackVal(seatId, myStack - pay);
                     updatePot(pay);
                     playerBets[seatId] = myBet + pay;
@@ -495,7 +744,8 @@
             let badgeRaise = document.getElementById('badge-raise-' + targetSeatForRaise);
             if (badgeRaise) { badgeRaise.innerText = val; badgeRaise.classList.add('show'); }
             
-            // Математика рейза
+            applyAutoFold(targetSeatForRaise);
+
             let raiseAmount = val === 'ALL-IN' ? getStack(targetSeatForRaise) : parseFloat(val);
             let myBet = playerBets[targetSeatForRaise] || 0;
             let amountToPay = raiseAmount - myBet;
@@ -506,9 +756,8 @@
                 setStackVal(targetSeatForRaise, myStack - pay);
                 updatePot(pay);
                 playerBets[targetSeatForRaise] = myBet + pay;
-                currentBet = Math.max(currentBet, raiseAmount); // Обновляем макс ставку
+                currentBet = Math.max(currentBet, raiseAmount);
             }
-
             document.getElementById('raise-modal').classList.remove('active');
             if (targetSeatForRaise === 'p5') getAdvice();
         }
@@ -532,7 +781,7 @@
         // --- БЛАЙНДЫ ---
         function setBB(seatId) {
             let seat = document.getElementById(seatId);
-            if (seat.querySelector('.chip').style.backgroundColor === 'var(--chip-red)') return;
+            if (seat.querySelector('.chip').style.backgroundColor === 'var(--chip-red)' || seat.style.display === 'none') return;
             currentBBSeat = seatId;
             updateBBVisual();
         }
@@ -541,19 +790,17 @@
             for (let i = 1; i <= seatOrder.length; i++) {
                 let prevIdx = (idx - i + seatOrder.length) % seatOrder.length;
                 let prevSeat = seatOrder[prevIdx];
-                if (document.getElementById(prevSeat).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)') return prevSeat;
+                let el = document.getElementById(prevSeat);
+                if (el.querySelector('.chip').style.backgroundColor !== 'var(--chip-red)' && el.style.display !== 'none') return prevSeat;
             }
             return null;
         }
-
         function updateBBVisual() {
             document.querySelectorAll('.mini-card').forEach(card => { card.classList.remove('bb-card'); card.innerText = ''; });
             document.querySelectorAll('.dealer-mark').forEach(m => m.classList.remove('show'));
-
             if (currentBBSeat) {
                 let seat = document.getElementById(currentBBSeat);
                 seat.querySelectorAll('.mini-card').forEach(card => { card.classList.add('bb-card'); card.innerText = 'BB'; });
-                
                 currentSBSeat = getPrevActive(currentBBSeat);
                 if (currentSBSeat) {
                     let dealerSeat = getPrevActive(currentSBSeat);
@@ -565,7 +812,6 @@
         // --- НОВАЯ РАЗДАЧА ---
         function resetRound(isWin) {
             if(editMode) return;
-            // Сброс карт
             cardElements.forEach(el => {
                 el.innerText = "?"; el.classList.remove("filled", "red");
                 if (el.classList.contains('board-slot')) el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
@@ -574,43 +820,32 @@
             document.querySelectorAll('.player-cards').forEach(c => c.classList.remove('hidden'));
             document.querySelectorAll('.action-badge').forEach(b => b.classList.remove('show'));
 
-            // Сброс ставок
-            pot = 0; currentBet = 0; playerBets = {};
+            pot = 0; currentBet = 0; playerBets = {}; lastActionSeat = null;
             updatePot(0);
 
-            // Движение BB
-            if (!currentBBSeat || document.getElementById(currentBBSeat).querySelector('.chip').style.backgroundColor === 'var(--chip-red)') {
-                currentBBSeat = seatOrder.find(id => document.getElementById(id).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)');
-            } else {
-                let currentIndex = seatOrder.indexOf(currentBBSeat);
-                for (let i = 1; i <= seatOrder.length; i++) {
-                    let nextIndex = (currentIndex + i) % seatOrder.length;
-                    let nextSeatId = seatOrder[nextIndex];
-                    if (document.getElementById(nextSeatId).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)') {
-                        currentBBSeat = nextSeatId; break;
-                    }
+            // Поиск следующего BB (пропуская скрытых и красных)
+            let startIndex = seatOrder.indexOf(currentBBSeat);
+            for (let i = 1; i <= seatOrder.length; i++) {
+                let nextIndex = (startIndex + i) % seatOrder.length;
+                let nextSeatId = seatOrder[nextIndex];
+                let el = document.getElementById(nextSeatId);
+                if (el.style.display !== 'none' && el.querySelector('.chip').style.backgroundColor !== 'var(--chip-red)') {
+                    currentBBSeat = nextSeatId; break;
                 }
             }
             updateBBVisual();
 
-            // Списываем ББ и МБ
             if (currentBBSeat && currentSBSeat) {
-                // BB
                 let bbStack = getStack(currentBBSeat);
                 setStackVal(currentBBSeat, bbStack - 1);
                 playerBets[currentBBSeat] = 1;
                 updatePot(1);
-                
-                // SB
                 let sbStack = getStack(currentSBSeat);
                 setStackVal(currentSBSeat, sbStack - 0.5);
                 playerBets[currentSBSeat] = 0.5;
                 updatePot(0.5);
-
-                currentBet = 1; // BB - это первая ставка
+                currentBet = 1;
             }
-            
-            console.log("Новая раздача. Выигрыш:", isWin);
         }
 
         function getAdvice() {
