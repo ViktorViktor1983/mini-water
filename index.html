@@ -14,6 +14,7 @@
             --panel-bg: #222222;
             --btn-bg: #444444;
             --btn-active: #ff9800;
+            --active-green: #4caf50;
             
             --chip-blue: #5c9ead; 
             --chip-red: #d32f2f;  
@@ -23,49 +24,39 @@
         body { display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
         
         /* Верхняя панель */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background-color: #222; font-size: 14px; border-bottom: 1px solid #444; flex-shrink: 0; position: relative; z-index: 20;}
-        .mode-switch { display: flex; background: #111; border-radius: 5px; overflow: hidden; font-size: 12px;}
-        .mode-switch span { padding: 4px 10px; color: #888; cursor: pointer; }
-        .mode-switch span.active { background: #333; color: white; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background-color: #222; font-size: 12px; border-bottom: 1px solid #444; flex-shrink: 0; z-index: 20; gap: 5px;}
         
-        .top-actions { display: flex; gap: 10px; }
-        .top-actions button { 
-            padding: 6px 12px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; 
-        }
+        .switch-group { display: flex; background: #111; border-radius: 5px; overflow: hidden; border: 1px solid #333;}
+        .switch-group span { padding: 6px 10px; color: #888; cursor: pointer; transition: 0.2s;}
+        .switch-group span.active { background: var(--active-green); color: white; font-weight: bold;}
+        
+        .top-actions { display: flex; gap: 5px; }
+        .top-actions button { padding: 6px 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; }
         .btn-win { background: #4caf50; color: white; }
         .btn-lose { background: #d32f2f; color: white; }
+        .btn-edit { background: #ff9800; color: black; }
 
-        .table-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-        }
+        .table-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 5px; }
 
         .table-area { 
-            width: 100%;
-            max-width: 60vh; 
-            max-height: 100%; 
-            aspect-ratio: 2 / 3; 
-            background-color: var(--table-color); 
-            border-radius: 70px; 
-            border: 6px solid #4a2c12; 
-            position: relative; 
-            overflow: hidden; 
+            width: 100%; max-width: 60vh; max-height: 100%; aspect-ratio: 2 / 3; 
+            background-color: var(--table-color); border-radius: 70px; border: 6px solid #4a2c12; 
+            position: relative; overflow: hidden; 
         }
 
+        /* Пот */
+        .pot-display {
+            position: absolute; top: 33%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 10px;
+            font-size: 14px; font-weight: bold; color: #ffd700; z-index: 5;
+        }
+
+        /* Игроки и фишки */
         .player-seat, .seat-me { 
-            position: absolute; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            transform: translate(-50%, -50%); 
-            z-index: 10;
-            width: 40px; height: 40px;
+            position: absolute; display: flex; align-items: center; justify-content: center;
+            transform: translate(-50%, -50%); z-index: 10; width: 40px; height: 40px;
         }
 
-        /* Карты игроков */
         .player-cards { display: flex; gap: 2px; position: absolute; transition: opacity 0.3s; z-index: 11; }
         .pos-top { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .pos-left { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 2px; }
@@ -73,43 +64,35 @@
         .player-cards.hidden { opacity: 0; }
         
         .mini-card { 
-            width: 14px; height: 20px; background-color: #b0b0b0; 
-            border: 1px solid #555; border-radius: 2px; 
+            width: 14px; height: 20px; background-color: #b0b0b0; border: 1px solid #555; border-radius: 2px; 
             background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 8px; font-weight: bold; color: transparent;
+            display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; color: transparent;
         }
-        
-        /* Метка BB */
-        .mini-card.bb-card {
-            background-image: none;
-            background-color: #fff;
-            color: var(--card-text-red);
-            font-size: 10px;
-        }
+        .mini-card.bb-card { background-image: none; background-color: #fff; color: var(--card-text-red); font-size: 10px; }
 
-        /* Фишка (Стек) */
         .chip {
-            width: 34px; height: 34px;
-            background-color: var(--chip-blue);
+            width: 34px; height: 34px; background-color: var(--chip-blue);
             border-radius: 50%; border: 3px dashed #fff;
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: bold; color: white;
             text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            z-index: 12;
-            transition: background-color 0.3s;
+            z-index: 12; transition: background-color 0.3s;
         }
+        
+        /* Метка Дилера */
+        .dealer-mark {
+            position: absolute; top: -10px; right: -10px; background: white; color: black;
+            width: 16px; height: 16px; border-radius: 50%; font-size: 10px; font-weight: bold;
+            display: none; align-items: center; justify-content: center; z-index: 15;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .dealer-mark.show { display: flex; }
 
         /* Кружки действий */
         .action-badge {
-            position: absolute;
-            width: 18px; height: 18px;
-            border-radius: 50%;
-            display: none;
-            align-items: center; justify-content: center;
-            font-size: 10px; font-weight: bold;
-            z-index: 100;
-            border: 1px solid #fff;
+            position: absolute; width: 18px; height: 18px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold; z-index: 100; border: 1px solid #fff;
         }
         .action-badge.show { display: flex; }
         .badge-call { background-color: #4caf50; color: white; }
@@ -117,44 +100,34 @@
 
         /* Панели действий */
         .action-menu {
-            position: absolute;
-            background-color: rgba(0,0,0,0.9);
-            padding: 4px; border-radius: 8px;
-            display: none; gap: 4px;
-            z-index: 100;
-            border: 1px dashed rgba(255,255,255,0.3);
-            transform: translateX(-50%); /* Центрируем, чтобы не улетало при добавлении кнопки */
+            position: absolute; background-color: rgba(0,0,0,0.9); padding: 4px; border-radius: 8px;
+            display: none; gap: 4px; z-index: 100; border: 1px dashed rgba(255,255,255,0.3);
+            transform: translateX(-50%);
         }
         .action-menu.active { display: flex; }
+        .action-menu.draggable { display: flex; border: 2px solid yellow; z-index: 999; cursor: grab; }
         .action-menu button {
-            background: #444; color: white; border: none;
-            padding: 8px 10px; border-radius: 6px;
+            background: #444; color: white; border: none; padding: 8px 10px; border-radius: 6px;
             font-size: 12px; font-weight: bold; cursor: pointer;
         }
         .action-menu button:active { background: var(--btn-active); color: black; }
 
-        /* Борд */
         .board { display: flex; gap: 5px; z-index: 2; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); }
         .board-slot { width: 40px; height: 60px; background-color: rgba(0, 0, 0, 0.3); border: 2px dashed #777; color: #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; box-shadow: none; cursor: pointer;}
         .board-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .board-slot.filled.red { color: var(--card-text-red); }
         .separator { width: 10px; }
 
-        /* Мои карты */
         .my-cards { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 15; transition: opacity 0.3s; }
         .my-cards.hidden { opacity: 0; }
-        .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer; transition: background 0.2s;}
+        .my-card-slot { width: 45px; height: 65px; background-color: #333; border: 2px dashed #777; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #777; cursor: pointer;}
         .my-card-slot.filled { background-color: var(--card-bg); border: none; color: var(--card-text-black); }
         .my-card-slot.filled.red { color: var(--card-text-red); }
 
-        .control-panel {
-            background-color: var(--panel-bg);
-            padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .advice-text { font-size: 20px; font-weight: bold; color: #ff9800; text-align: center; }
+        .control-panel { background-color: var(--panel-bg); padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+        .btn-advice { background: #2196f3; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.5);}
 
-        /* Модальные окна (Рейз и Стек) */
+        /* Модальные окна */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
         .modal-box { background: #222; padding: 20px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #444; }
@@ -164,16 +137,10 @@
         .input-with-btn input { flex: 1; background: transparent; border: none; color: white; font-size: 18px; text-align: center; outline: none; padding: 5px; width: 100%; }
         .input-with-btn button { background: var(--btn-active); color: black; border: none; border-radius: 6px; padding: 8px 15px; font-weight: bold; font-size: 14px; cursor: pointer; margin-left: 5px; }
         
-        /* Сетки быстрых кнопок */
-        .quick-bets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .quick-bets button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
-        .quick-bets button:active { background: var(--btn-active); color: black; }
+        .quick-bets, .stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .quick-bets button, .stack-grid button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .quick-bets button:active, .stack-grid button:active { background: var(--btn-active); color: black; }
 
-        .stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .stack-grid button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .stack-grid button:active { background: var(--btn-active); color: black; }
-
-        /* Панель ввода карт */
         .input-panel { position: absolute; bottom: -100%; left: 0; width: 100%; background-color: var(--panel-bg); border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; z-index: 50; transition: bottom 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
         .input-panel.active { bottom: 0; }
         .row { display: flex; gap: 5px; justify-content: center; }
@@ -182,26 +149,33 @@
         .suits-row { display: none; gap: 10px; justify-content: center; margin-top: 10px; }
         .suits-row.active { display: flex; }
         .suit-btn { flex: 1; padding: 20px 0; background-color: var(--btn-bg); border: none; border-radius: 8px; color: white; font-size: 24px; cursor: pointer; }
-        .suit-btn:active { background-color: var(--btn-active); color: black; }
     </style>
 </head>
 <body>
 
     <!-- Верхняя панель -->
     <div class="top-bar">
-        <div class="mode-switch">
+        <div class="switch-group">
+            <span class="active">Кэш</span>
+            <span>Турнир</span>
+        </div>
+        <div class="switch-group">
             <span class="active">Профи</span>
             <span>Быстрый</span>
         </div>
         <div class="top-actions">
-            <button class="btn-win" onclick="resetRound(true)">🏆 Выигрыш</button>
-            <button class="btn-lose" onclick="resetRound(false)">💀 Проигрыш</button>
+            <button class="btn-edit" onclick="toggleEditMode()" id="edit-btn">Ред.</button>
+            <button class="btn-win" onclick="resetRound(true)">🏆</button>
+            <button class="btn-lose" onclick="resetRound(false)">💀</button>
         </div>
     </div>
 
     <div class="table-container">
         <div class="table-area" id="table-area">
             
+            <!-- Пот -->
+            <div class="pot-display" id="pot-display">Пот: 0 BB</div>
+
             <div class="my-cards" id="my-cards-container">
                 <div class="my-card-slot card-slot" id="slot-1">?</div>
                 <div class="my-card-slot card-slot" id="slot-2">?</div>
@@ -218,39 +192,48 @@
 
             <!-- Игроки -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
+                <div class="dealer-mark" id="dealer-p1">D</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
+                <div class="dealer-mark" id="dealer-p2">D</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
+                <div class="dealer-mark" id="dealer-p3">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
+                <div class="dealer-mark" id="dealer-p4">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
+                <div class="dealer-mark" id="dealer-p5">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
+                <div class="dealer-mark" id="dealer-p6">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
+                <div class="dealer-mark" id="dealer-p7">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
+                <div class="dealer-mark" id="dealer-p8">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
 
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
+                <div class="dealer-mark" id="dealer-me">D</div>
                 <div class="chip" data-stack="100">100</div>
             </div>
 
@@ -289,7 +272,7 @@
     </div>
 
     <div class="control-panel">
-        <div class="advice-text">Ожидание хода...</div>
+        <button class="btn-advice" onclick="getAdvice()">🧠 Получить совет</button>
     </div>
 
     <!-- Окно ввода карт -->
@@ -355,7 +338,6 @@
                 <input type="number" id="stack-input" placeholder="0">
                 <button onclick="submitStack()">ОК</button>
             </div>
-            <!-- Сетка 0-9 в 2 ряда -->
             <div class="stack-grid">
                 <button onclick="setStack(0)">0</button>
                 <button onclick="setStack(1)">1</button>
@@ -371,23 +353,104 @@
         </div>
     </div>
 
+    <!-- Модальное окно координат редактора -->
+    <div class="modal-overlay" id="coords-modal">
+        <div class="modal-box" style="max-height: 80vh; overflow-y: auto;">
+            <h3>Координаты панелей</h3>
+            <div class="modal-content" id="coords-text" style="background:#111; padding:10px; border-radius:8px; font-family:monospace; font-size:12px; color:#4caf50; text-align:left; white-space:pre-wrap; margin-bottom:15px;"></div>
+            <button onclick="document.getElementById('coords-modal').classList.remove('active')" style="padding:10px 20px; border-radius:8px; background:#ff9800; color:black; border:none; font-weight:bold; width:100%;">Закрыть</button>
+        </div>
+    </div>
+
     <script>
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentTargetId = null;
         let currentRank = "";
         let targetSeatForRaise = null;
         let targetSeatForStack = null;
+        let pot = 0;
+        let editMode = false;
 
-        // Порядок мест по часовой стрелке
         const seatOrder = ['p1', 'p2', 'p3', 'p4', 'p5', 'me', 'p6', 'p7', 'p8'];
-        let currentBBSeat = 'p1'; // Начальный BB
+        let currentBBSeat = 'p1';
 
-        // --- ЛОГИКА КАРТ ---
+        // --- УПРАВЛЕНИЕ РЕЖИМОМ РЕДАКТОРА ---
+        function toggleEditMode() {
+            editMode = !editMode;
+            const btn = document.getElementById('edit-btn');
+            const menus = document.querySelectorAll('.action-menu');
+
+            if (editMode) {
+                btn.innerText = 'Сохранить';
+                btn.style.background = '#4caf50';
+                menus.forEach(m => {
+                    m.classList.add('draggable');
+                    makeDraggable(m);
+                });
+            } else {
+                btn.innerText = 'Ред.';
+                btn.style.background = '#ff9800';
+                menus.forEach(m => m.classList.remove('draggable'));
+                saveCoords();
+            }
+        }
+
+        function makeDraggable(el) {
+            let initialX, initialY, isDragging = false;
+            el.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                const touch = e.touches[0];
+                const rect = el.getBoundingClientRect();
+                initialX = touch.clientX - rect.left;
+                initialY = touch.clientY - rect.top;
+            }, {passive: false});
+
+            el.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const table = document.getElementById('table-area');
+                const tableRect = table.getBoundingClientRect();
+
+                let newX = touch.clientX - tableRect.left - initialX;
+                let newY = touch.clientY - tableRect.top - initialY;
+
+                let percentX = (newX / tableRect.width) * 100;
+                let percentY = (newY / tableRect.height) * 100;
+
+                percentX = Math.max(0, Math.min(90, percentX));
+                percentY = Math.max(0, Math.min(95, percentY));
+
+                el.style.left = percentX + '%';
+                el.style.top = percentY + '%';
+            }, {passive: false});
+
+            el.addEventListener('touchend', () => { isDragging = false; });
+        }
+
+        function saveCoords() {
+            let result = "";
+            document.querySelectorAll('.action-menu').forEach(m => {
+                result += m.id + ": left: " + parseFloat(m.style.left).toFixed(1) + "%, top: " + parseFloat(m.style.top).toFixed(1) + "%;\n";
+            });
+            document.getElementById('coords-text').innerText = result;
+            document.getElementById('coords-modal').classList.add('active');
+        }
+
+        // --- ПОТ ---
+        function updatePot(amount) {
+            pot += amount;
+            document.getElementById('pot-display').innerText = `Пот: ${pot} BB`;
+        }
+
+        // --- КАРТЫ ---
         const cardElements = document.querySelectorAll('.card-slot');
         cardElements.forEach(el => {
             let cardLongPress = false;
             let cardTimer = null;
 
             el.addEventListener('touchstart', (e) => {
+                if(editMode) return;
                 cardLongPress = false;
                 cardTimer = setTimeout(() => {
                     cardLongPress = true;
@@ -401,7 +464,7 @@
 
             el.addEventListener('touchend', () => {
                 clearTimeout(cardTimer);
-                if (!cardLongPress) openInput(el.id);
+                if (!cardLongPress && !editMode) openInput(el.id);
             });
             el.addEventListener('touchmove', () => clearTimeout(cardTimer));
         });
@@ -413,10 +476,7 @@
             document.getElementById('input-panel').classList.add('active');
         }
 
-        function closeInput() {
-            document.getElementById('input-panel').classList.remove('active');
-        }
-
+        function closeInput() { document.getElementById('input-panel').classList.remove('active'); }
         function selectRank(rank) {
             currentRank = rank;
             document.getElementById('ranks-view').style.display = 'none';
@@ -428,31 +488,22 @@
             let isDuplicate = false;
 
             cardElements.forEach(el => {
-                if (el.id !== currentTargetId && el.innerText === newCardValue) {
-                    isDuplicate = true;
-                }
+                if (el.id !== currentTargetId && el.innerText === newCardValue) isDuplicate = true;
             });
 
-            if (isDuplicate) {
-                alert("Такая карта уже есть!");
-                return;
-            }
+            if (isDuplicate) { alert("Такая карта уже есть!"); return; }
 
             let el = document.getElementById(currentTargetId);
             el.innerText = newCardValue;
             el.classList.add("filled");
-            
-            if (el.classList.contains('board-slot')) {
-                el.style.backgroundColor = "var(--card-bg)";
-            }
-
+            if (el.classList.contains('board-slot')) el.style.backgroundColor = "var(--card-bg)";
             if (suit === '♥' || suit === '♦') el.classList.add("red");
             else el.classList.remove("red");
 
             closeInput();
         }
 
-        // --- ЛОГИКА ИГРОКОВ (Тройное нажатие, цвета, меню) ---
+        // --- ИГРОКИ ---
         const seats = document.querySelectorAll('.player-seat, .seat-me');
         seats.forEach(seat => {
             let tapCount = 0;
@@ -461,6 +512,7 @@
             let isLongPress = false;
 
             seat.addEventListener('touchstart', (e) => {
+                if(editMode) return;
                 isLongPress = false;
                 document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
 
@@ -471,7 +523,6 @@
                         chip.style.backgroundColor = 'var(--chip-red)';
                         let cards = seat.querySelector('.player-cards');
                         if (cards) cards.classList.add('hidden');
-                        // Если ушедший игрок был BB, сбрасываем BB
                         if (seat.id === currentBBSeat) currentBBSeat = null; 
                         updateBBVisual();
                     } else {
@@ -484,37 +535,32 @@
 
             seat.addEventListener('touchend', (e) => {
                 clearTimeout(longPressTimer);
-                
-                if (!isLongPress) {
+                if (!isLongPress && !editMode) {
                     tapCount++;
                     if (tapCount === 1) {
                         tapTimer = setTimeout(() => {
-                            // Одиночное нажатие - открываем меню
                             let menu = document.getElementById('menu-' + seat.id);
                             if (menu) menu.classList.add('active');
                             tapCount = 0;
                         }, 300);
                     } else if (tapCount === 3) {
-                        // Тройное нажатие - ставим BB
                         clearTimeout(tapTimer);
                         setBB(seat.id);
                         tapCount = 0;
                     }
                 }
             });
-            
-            seat.addEventListener('touchmove', () => {
-                clearTimeout(longPressTimer);
-            });
+            seat.addEventListener('touchmove', () => clearTimeout(longPressTimer));
         });
 
         document.addEventListener('touchstart', (e) => {
-            if (!e.target.closest('.player-seat') && !e.target.closest('.seat-me') && !e.target.closest('.action-menu')) {
+            if (!e.target.closest('.player-seat') && !e.target.closest('.seat-me') && !e.target.closest('.action-menu') && !editMode) {
                 document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
             }
         });
 
         function doAction(seatId, action) {
+            if(editMode) return;
             let seat = document.getElementById(seatId);
             let chip = seat.querySelector('.chip');
             let cards = seat.querySelector('.player-cards');
@@ -533,47 +579,41 @@
                 chip.style.backgroundColor = 'var(--chip-blue)';
             } else if (action === 'call') {
                 if (badgeCall) badgeCall.classList.add('show');
+                updatePot(1); // Условно колл = 1 BB
             }
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
+            
+            // Автоматический вызов совета, если ход дошел до нас (после P5)
+            if (seatId === 'p5') {
+                getAdvice();
+            }
         }
 
-        // --- ЛОГИКА РЕЙЗА ---
+        // --- РЕЙЗ ---
         function openRaiseModal(seatId) {
+            if(editMode) return;
             targetSeatForRaise = seatId;
             document.getElementById('raise-input').value = '';
             document.getElementById('raise-modal').classList.add('active');
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
         }
 
-        function closeRaiseModal(event) {
-            if (event.target.id === 'raise-modal') {
-                document.getElementById('raise-modal').classList.remove('active');
-            }
-        }
-
-        function setRaise(value) {
-            if (value === 'all') {
-                document.getElementById('raise-input').value = 'ALL-IN';
-            } else {
-                document.getElementById('raise-input').value = value;
-            }
-            submitRaise();
-        }
+        function closeRaiseModal(event) { if (event.target.id === 'raise-modal') document.getElementById('raise-modal').classList.remove('active'); }
+        function setRaise(value) { document.getElementById('raise-input').value = value === 'all' ? 'ALL-IN' : value; submitRaise(); }
 
         function submitRaise() {
             let val = document.getElementById('raise-input').value;
             if (!val) return;
-
             let badgeRaise = document.getElementById('badge-raise-' + targetSeatForRaise);
-            if (badgeRaise) {
-                badgeRaise.innerText = val;
-                badgeRaise.classList.add('show');
-            }
+            if (badgeRaise) { badgeRaise.innerText = val; badgeRaise.classList.add('show'); }
             document.getElementById('raise-modal').classList.remove('active');
+            if(val !== 'ALL-IN') updatePot(parseFloat(val));
+            if (targetSeatForRaise === 'p5') getAdvice();
         }
 
-        // --- ЛОГИКА СТЕКА (S) ---
+        // --- СТЕК ---
         function openStackModal(seatId) {
+            if(editMode) return;
             targetSeatForStack = seatId;
             let seat = document.getElementById(seatId);
             let currentStack = seat.querySelector('.chip').getAttribute('data-stack');
@@ -582,89 +622,86 @@
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
         }
 
-        function closeStackModal(event) {
-            if (event.target.id === 'stack-modal') {
-                document.getElementById('stack-modal').classList.remove('active');
-            }
-        }
-
+        function closeStackModal(event) { if (event.target.id === 'stack-modal') document.getElementById('stack-modal').classList.remove('active'); }
         function setStack(num) {
             let input = document.getElementById('stack-input');
-            if (input.value === '0' || input.value === '') {
-                input.value = num;
-            } else {
-                input.value += num;
-            }
+            if (input.value === '0' || input.value === '') input.value = num;
+            else input.value += num;
         }
 
         function submitStack() {
             let val = document.getElementById('stack-input').value;
             if (!val) return;
-
             let seat = document.getElementById(targetSeatForStack);
             let chip = seat.querySelector('.chip');
             chip.setAttribute('data-stack', val);
             chip.innerText = val;
-            
             document.getElementById('stack-modal').classList.remove('active');
         }
 
-        // --- ЛОГИКА БЛАЙНДОВ ---
+        // --- БЛАЙНДЫ И ДИЛЕР ---
         function setBB(seatId) {
             let seat = document.getElementById(seatId);
             let chip = seat.querySelector('.chip');
-            
-            // Игнорируем, если место пустое (красное)
             if (chip.style.backgroundColor === 'var(--chip-red)') return;
-
             currentBBSeat = seatId;
             updateBBVisual();
         }
 
-        function updateBBVisual() {
-            // Убираем старые метки
-            document.querySelectorAll('.mini-card').forEach(card => {
-                card.classList.remove('bb-card');
-                card.innerText = '';
-            });
+        function getPrevActive(seatId) {
+            let idx = seatOrder.indexOf(seatId);
+            for (let i = 1; i <= seatOrder.length; i++) {
+                let prevIdx = (idx - i + seatOrder.length) % seatOrder.length;
+                let prevSeat = seatOrder[prevIdx];
+                if (document.getElementById(prevSeat).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)') {
+                    return prevSeat;
+                }
+            }
+            return null;
+        }
 
-            // Ставим новую
+        function updateBBVisual() {
+            // Сброс
+            document.querySelectorAll('.mini-card').forEach(card => { card.classList.remove('bb-card'); card.innerText = ''; });
+            document.querySelectorAll('.dealer-mark').forEach(m => m.classList.remove('show'));
+
             if (currentBBSeat) {
+                // BB
                 let seat = document.getElementById(currentBBSeat);
-                let cards = seat.querySelectorAll('.mini-card');
-                cards.forEach(card => {
-                    card.classList.add('bb-card');
-                    card.innerText = 'BB';
-                });
+                seat.querySelectorAll('.mini-card').forEach(card => { card.classList.add('bb-card'); card.innerText = 'BB'; });
+                
+                // SB и Дилер
+                let sbSeat = getPrevActive(currentBBSeat);
+                if (sbSeat) {
+                    let dealerSeat = getPrevActive(sbSeat);
+                    if (dealerSeat) {
+                        document.getElementById('dealer-' + dealerSeat).classList.add('show');
+                    }
+                }
             }
         }
 
         // --- НОВАЯ РАЗДАЧА ---
         function resetRound(isWin) {
-            // 1. Сброс карт
+            if(editMode) return;
+            // Сброс карт
             cardElements.forEach(el => {
                 el.innerText = "?";
                 el.classList.remove("filled", "red");
-                if (el.classList.contains('board-slot')) {
-                    el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-                }
+                if (el.classList.contains('board-slot')) el.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
             });
             document.getElementById('my-cards-container').classList.remove('hidden');
-
-            // 2. Сброс игроков (только карты и значки, цвета остаются как были)
-            seats.forEach(seat => {
-                let cards = seat.querySelector('.player-cards');
-                if (cards && seat.id !== 'me') cards.classList.remove('hidden');
-            });
-            
+            document.querySelectorAll('.player-cards').forEach(c => c.classList.remove('hidden'));
             document.querySelectorAll('.action-badge').forEach(b => b.classList.remove('show'));
 
-            // 3. Перемещение BB
+            // Сброс пота
+            pot = 0;
+            updatePot(0);
+
+            // Движение BB
             if (!currentBBSeat || document.getElementById(currentBBSeat).querySelector('.chip').style.backgroundColor === 'var(--chip-red)') {
-                // Если BB нет или он ушел, ищем первого синего с начала
                 currentBBSeat = seatOrder.find(id => document.getElementById(id).querySelector('.chip').style.backgroundColor !== 'var(--chip-red)');
             } else {
-                // Ищем следующего синего по часовой стрелке
                 let currentIndex = seatOrder.indexOf(currentBBSeat);
                 for (let i = 1; i <= seatOrder.length; i++) {
                     let nextIndex = (currentIndex + i) % seatOrder.length;
@@ -675,12 +712,15 @@
                     }
                 }
             }
-            
             updateBBVisual();
-
-            // (В будущем: логика добавления/убавления банка)
             console.log("Новая раздача. Выигрыш:", isWin);
+        }
+
+        // --- СОВЕТ ---
+        function getAdvice() {
+            if(editMode) return;
+            alert("Отправка данных на сервер для получения совета... (здесь будет логика движка)");
         }
     </script>
 </body>
-</html>
+                                                             </html>
