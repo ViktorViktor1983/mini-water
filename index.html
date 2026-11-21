@@ -52,10 +52,11 @@
 
         .chip { width: 34px; height: 34px; background-color: var(--chip-blue); border-radius: 50%; border: 3px dashed #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 12; transition: background-color 0.3s; }
         
-        .dealer-mark { position: absolute; top: -10px; right: -10px; background: white; color: black; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; font-weight: bold; display: none; align-items: center; justify-content: center; z-index: 15; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        /* Метки привязаны к фишке */
+        .dealer-mark { position: absolute; top: -8px; right: -8px; background: white; color: black; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; font-weight: bold; display: none; align-items: center; justify-content: center; z-index: 15; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .dealer-mark.show { display: flex; }
-
-        .action-badge { position: absolute; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; z-index: 100; border: 1px solid #fff; }
+        
+        .action-badge { position: absolute; top: -8px; left: -8px; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; z-index: 15; border: 1px solid #fff; }
         .action-badge.show { display: flex; }
         .badge-call { background-color: #4caf50; color: white; }
         .badge-raise { background-color: #ff9800; color: black; font-size: 8px; }
@@ -106,8 +107,8 @@
         
         .profile-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 40vh; overflow-y: auto;}
         .profile-item { display: flex; justify-content: space-between; align-items: center; background: #333; padding: 10px; border-radius: 8px; }
-        .profile-item button { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .profile-item button.del { background: #d32f2f; margin-left: 5px; }
+        .profile-item button { padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; border:none;}
+        .profile-item button.del { background: #d32f2f; color: white;}
         
         .checkbox-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin-bottom: 15px; font-size: 13px; color: #aaa;}
         .checkbox-row input { width: 18px; height: 18px; }
@@ -147,49 +148,67 @@
                 <div class="board-slot card-slot" id="board-5">?</div>
             </div>
 
-            <!-- Игроки -->
+            <!-- Игроки (кружки действий теперь ВНУТРИ фишек) -->
             <div class="player-seat" id="p1" style="left: 27.5%; top: 5.2%;">
+                <div class="action-badge badge-call" id="badge-call-p1">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p1">3</div>
                 <div class="dealer-mark" id="dealer-p1">D</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p2" style="left: 73.3%; top: 5.0%;">
+                <div class="action-badge badge-call" id="badge-call-p2">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p2">3</div>
                 <div class="dealer-mark" id="dealer-p2">D</div>
                 <div class="player-cards pos-top"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p3" style="left: 92.3%; top: 28.8%;">
+                <div class="action-badge badge-call" id="badge-call-p3">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p3">3</div>
                 <div class="dealer-mark" id="dealer-p3">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p4" style="left: 92.9%; top: 59.5%;">
+                <div class="action-badge badge-call" id="badge-call-p4">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p4">3</div>
                 <div class="dealer-mark" id="dealer-p4">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p5" style="left: 92.6%; top: 86.5%;">
+                <div class="action-badge badge-call" id="badge-call-p5">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p5">3</div>
                 <div class="dealer-mark" id="dealer-p5">D</div>
                 <div class="player-cards pos-left"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p6" style="left: 6.8%; top: 85.5%;">
+                <div class="action-badge badge-call" id="badge-call-p6">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p6">3</div>
                 <div class="dealer-mark" id="dealer-p6">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p7" style="left: 7.3%; top: 60.0%;">
+                <div class="action-badge badge-call" id="badge-call-p7">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p7">3</div>
                 <div class="dealer-mark" id="dealer-p7">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
             <div class="player-seat" id="p8" style="left: 7.7%; top: 30.1%;">
+                <div class="action-badge badge-call" id="badge-call-p8">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-p8">3</div>
                 <div class="dealer-mark" id="dealer-p8">D</div>
                 <div class="player-cards pos-right"><div class="mini-card"></div><div class="mini-card"></div></div>
                 <div class="chip" data-stack="100">100</div>
             </div>
 
             <div class="seat-me" id="me" style="left: 50.7%; top: 95.0%;">
+                <div class="action-badge badge-call" id="badge-call-me">✓</div>
+                <div class="action-badge badge-raise" id="badge-raise-me">3</div>
                 <div class="dealer-mark" id="dealer-me">D</div>
                 <div class="chip" data-stack="100">100</div>
             </div>
@@ -204,26 +223,6 @@
             <div class="action-menu" id="menu-p7" style="left: 29.7%; top: 50.7%;"><button onclick="doAction('p7', 'fold')">F</button><button onclick="doAction('p7', 'call')">C</button><button onclick="openRaiseModal('p7')">R</button><button onclick="openStackModal('p7')">S</button></div>
             <div class="action-menu" id="menu-p8" style="left: 21.2%; top: 33.6%;"><button onclick="doAction('p8', 'fold')">F</button><button onclick="doAction('p8', 'call')">C</button><button onclick="openRaiseModal('p8')">R</button><button onclick="openStackModal('p8')">S</button></div>
             <div class="action-menu" id="menu-me" style="left: 50.6%; top: 83.0%;"><button onclick="doAction('me', 'fold')">F</button><button onclick="doAction('me', 'call')">C</button><button onclick="openRaiseModal('me')">R</button><button onclick="openStackModal('me')">S</button></div>
-
-            <!-- Кружки действий -->
-            <div class="action-badge badge-call" id="badge-call-p1" style="left: 35.0%; top: 4.1%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p1" style="left: 15.3%; top: 4.0%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p2" style="left: 79.5%; top: 3.2%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p2" style="left: 61.3%; top: 3.0%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p3" style="left: 89.4%; top: 32.7%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p3" style="left: 89.4%; top: 20.8%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p4" style="left: 89.8%; top: 64.1%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p4" style="left: 90.0%; top: 51.4%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p5" style="left: 90.0%; top: 91.0%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p5" style="left: 90.0%; top: 78.7%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p6" style="left: 4.6%; top: 90.3%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p6" style="left: 3.8%; top: 78.3%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p7" style="left: 3.7%; top: 64.0%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p7" style="left: 4.1%; top: 52.7%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-p8" style="left: 4.7%; top: 34.6%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-p8" style="left: 4.1%; top: 22.4%;">3</div>
-            <div class="action-badge badge-call" id="badge-call-me" style="left: 41.6%; top: 88.4%;">✓</div>
-            <div class="action-badge badge-raise" id="badge-raise-me" style="left: 53.2%; top: 88.3%;">3</div>
 
         </div>
     </div>
@@ -304,9 +303,8 @@
 
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <h3>Профили столов</h3>
+            <h3>Ваши столы</h3>
             <div class="profile-list" id="profile-list"></div>
-            <button onclick="promptNewProfile()" style="width:100%; padding:12px; background:#2196f3; color:white; border:none; border-radius:8px; font-weight:bold; margin-bottom:10px;">+ Добавить профиль</button>
             <button onclick="document.getElementById('profile-modal').classList.remove('active')" style="width:100%; padding:12px; background:#444; color:white; border:none; border-radius:8px; font-weight:bold;">Закрыть</button>
         </div>
     </div>
@@ -324,14 +322,13 @@
         </div>
     </div>
 
-    <!-- НОВОЕ ОКНО: Инструкция для редактора -->
     <div class="modal-overlay" id="edit-info-modal">
         <div class="modal-box" onclick="event.stopPropagation()">
             <h3>Редактор стола</h3>
             <p>Добро пожаловать в режим редактирования!</p>
             <p>1. Вы можете двигать фишки игроков и кнопки (F, C, R, S) как вам удобно.</p>
             <p>2. Чтобы <b>удалить</b> игрока, сделайте <b>3 быстрых нажатия</b> по его фишке. (Тапните еще 3 раза, чтобы вернуть).</p>
-            <p>3. Нажмите <b>«Сохранить»</b>, чтобы запомнить этот стол под своим именем (например, 6-max), или <b>«Отмена»</b>, чтобы вернуть всё как было.</p>
+            <p>3. Нажмите <b>«Сохранить»</b>, чтобы запомнить этот стол под своим именем.</p>
             
             <div class="checkbox-row">
                 <input type="checkbox" id="dont-show-edit-info">
@@ -349,14 +346,12 @@
         let targetSeatForStack = null;
         let editMode = false;
         
-        // Состояние до входа в редактор (для кнопки Отмена)
         let preEditState = null;
 
-        // Логика ставок
         let pot = 0;
         let currentBet = 0; 
         let playerBets = {}; 
-        let lastActionSeat = null; // Для авто-фолда
+        let lastActionSeat = null; 
 
         const seatOrder = ['p1', 'p2', 'p3', 'p4', 'p5', 'me', 'p6', 'p7', 'p8'];
         let currentBBSeat = 'p1';
@@ -376,16 +371,60 @@
 
         // --- СИСТЕМА ПРОФИЛЕЙ И РЕДАКТОР ---
         function handleEditClick() {
-            if (!editMode) {
-                // Проверяем, надо ли показывать инструкцию
+            if (editMode) {
+                promptNewProfile();
+            } else {
+                openProfilesList();
+            }
+        }
+
+        function openProfilesList() {
+            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
+            let list = document.getElementById('profile-list');
+            list.innerHTML = '';
+            
+            // Кнопка создания нового профиля
+            let createBtn = document.createElement('button');
+            createBtn.innerText = '+ Настроить новый стол';
+            createBtn.style.cssText = 'background:#2196f3; color:white; padding:12px; border-radius:8px; border:none; font-weight:bold; margin-bottom:10px;';
+            createBtn.onclick = () => {
+                document.getElementById('profile-modal').classList.remove('active');
                 if (localStorage.getItem('hideEditInfo') !== 'true') {
                     document.getElementById('edit-info-modal').classList.add('active');
                 } else {
                     enterEditMode();
                 }
+            };
+            list.appendChild(createBtn);
+
+            let keys = Object.keys(profiles);
+            if (keys.length === 0) {
+                let p = document.createElement('p');
+                p.innerText = 'Нет сохраненных профилей';
+                p.style.color = '#888';
+                list.appendChild(p);
             } else {
-                promptNewProfile();
+                keys.forEach(name => {
+                    let div = document.createElement('div');
+                    div.className = 'profile-item';
+                    div.innerHTML = `
+                        <span style="font-weight:bold;">${name}</span>
+                        <div style="display:flex; gap:5px;">
+                            <button style="background:#ff9800; color:black;" onclick="editExistingProfile('${name}')">Ред.</button>
+                            <button style="background:#4caf50; color:white;" onclick="loadProfile('${name}')">Играть</button>
+                            <button class="del" onclick="deleteProfile('${name}')">X</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
             }
+            document.getElementById('profile-modal').classList.add('active');
+        }
+
+        function editExistingProfile(name) {
+            loadProfile(name);
+            document.getElementById('profile-modal').classList.remove('active');
+            enterEditMode();
         }
 
         function closeEditInfo() {
@@ -397,7 +436,6 @@
         }
 
         function enterEditMode() {
-            // Делаем снимок состояния для Отмены
             preEditState = {
                 menuPositions: {},
                 playerPositions: {}
@@ -426,12 +464,10 @@
         function cancelEdit() {
             if (!preEditState) return;
             
-            // Восстанавливаем позиции меню
             for (let id in preEditState.menuPositions) {
                 let el = document.getElementById(id);
                 if (el) { el.style.left = preEditState.menuPositions[id].left; el.style.top = preEditState.menuPositions[id].top; }
             }
-            // Восстанавливаем позиции и видимость игроков
             for (let id in preEditState.playerPositions) {
                 let el = document.getElementById(id);
                 if (el) { 
@@ -451,7 +487,6 @@
             document.getElementById('edit-btn').style.background = '#ff9800';
             document.getElementById('cancel-btn').style.display = 'none';
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('draggable'));
-            document.getElementById('profile-modal').classList.remove('active');
             document.getElementById('prompt-modal').classList.remove('active');
         }
 
@@ -501,7 +536,7 @@
                     tapCount++;
                     if (tapCount === 3) {
                         clearTimeout(tapTimer);
-                        el.style.display = 'none'; // Удаляем
+                        el.style.display = 'none';
                         tapCount = 0;
                     } else {
                         clearTimeout(tapTimer);
@@ -534,29 +569,6 @@
 
             alert("Профиль '" + name + "' сохранен!");
             exitEditMode();
-        }
-
-        function openProfilesList() {
-            let profiles = JSON.parse(localStorage.getItem('pokerProfiles') || '{}');
-            let list = document.getElementById('profile-list');
-            list.innerHTML = '';
-            
-            let keys = Object.keys(profiles);
-            if (keys.length === 0) {
-                list.innerHTML = '<p style="color:#888;">Нет сохраненных профилей</p>';
-            } else {
-                keys.forEach(name => {
-                    let div = document.createElement('div');
-                    div.className = 'profile-item';
-                    div.innerHTML = `<span>${name}</span>
-                        <div>
-                            <button onclick="loadProfile('${name}')">Загрузить</button>
-                            <button class="del" onclick="deleteProfile('${name}')">X</button>
-                        </div>`;
-                    list.appendChild(div);
-                });
-            }
-            document.getElementById('profile-modal').classList.add('active');
         }
 
         function loadProfile(name) {
@@ -682,7 +694,7 @@
         function applyFoldToSeat(seatId) {
             if (seatId === 'me') return;
             let seat = document.getElementById(seatId);
-            if (seat.style.display === 'none') return; // Пропускаем удаленных
+            if (seat.style.display === 'none') return; 
             
             let chip = seat.querySelector('.chip');
             if (chip.style.backgroundColor === 'var(--chip-red)') return;
@@ -823,7 +835,6 @@
             pot = 0; currentBet = 0; playerBets = {}; lastActionSeat = null;
             updatePot(0);
 
-            // Поиск следующего BB (пропуская скрытых и красных)
             let startIndex = seatOrder.indexOf(currentBBSeat);
             for (let i = 1; i <= seatOrder.length; i++) {
                 let nextIndex = (startIndex + i) % seatOrder.length;
