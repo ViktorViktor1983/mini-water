@@ -36,9 +36,9 @@
         .btn-edit { background: #ff9800; color: black; padding: 6px 10px; font-size: 12px;}
         .btn-cancel { background: #9e9e9e; color: black; padding: 6px 10px; font-size: 12px; display: none; }
         
-        /* Увеличенные кнопки Выигрыш/Проигрыш */
-        .btn-win { background: #4caf50; color: white; padding: 10px 16px; font-size: 18px; }
-        .btn-lose { background: #d32f2f; color: white; padding: 10px 16px; font-size: 18px; }
+        /* Увеличенные кнопки Выигрыш/Проигрыш (на 100%) */
+        .btn-win { background: #4caf50; color: white; padding: 12px 20px; font-size: 20px; }
+        .btn-lose { background: #d32f2f; color: white; padding: 12px 20px; font-size: 20px; }
 
         .table-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 5px; }
         .table-area { width: 100%; max-width: 60vh; max-height: 100%; aspect-ratio: 2 / 3; background-color: var(--table-color); border-radius: 70px; border: 6px solid #4a2c12; position: relative; overflow: hidden; }
@@ -55,7 +55,7 @@
         .mini-card { width: 14px; height: 20px; background-color: #b0b0b0; border: 1px solid #555; border-radius: 2px; background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px); display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; color: transparent; }
         .mini-card.bb-card { background-image: none; background-color: #fff; color: var(--card-text-red); font-size: 10px; }
 
-        .chip { width: 34px; height: 34px; background-color: var(--chip-blue); border-radius: 50%; border: 3px dashed #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 12; transition: background-color 0.3s; }
+        .chip { width: 34px; height: 34px; background-color: var(--chip-blue); border-radius: 50%; border: 3px dashed #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 12; transition: background-color 0.3s; }
         
         .dealer-mark { position: absolute; top: -8px; right: -8px; background: white; color: black; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; font-weight: bold; display: none; align-items: center; justify-content: center; z-index: 15; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .dealer-mark.show { display: flex; }
@@ -100,9 +100,14 @@
         .input-with-btn input { flex: 1; background: transparent; border: none; color: white; font-size: 18px; text-align: center; outline: none; padding: 5px; width: 100%; }
         .input-with-btn button { background: var(--btn-active); color: black; border: none; border-radius: 6px; padding: 8px 15px; font-weight: bold; font-size: 14px; cursor: pointer; margin-left: 5px; }
         
-        .quick-bets, .stack-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-        .quick-bets button, .stack-grid button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
-        .quick-bets button:active, .stack-grid button:active { background: var(--btn-active); color: black; }
+        .quick-bets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+        .quick-bets button { padding: 10px 0; border-radius: 6px; border: none; background: #444; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .quick-bets button:active { background: var(--btn-active); color: black; }
+
+        /* Кнопки зон стека */
+        .stack-zones { display: flex; flex-direction: column; gap: 10px; }
+        .stack-zones button { padding: 15px 0; border-radius: 8px; border: none; background: #444; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .stack-zones button:active { background: var(--btn-active); color: black; }
 
         .input-panel { position: absolute; bottom: -100%; left: 0; width: 100%; background-color: var(--panel-bg); border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; z-index: 50; transition: bottom 0.3s ease; display: flex; flex-direction: column; gap: 10px; }
         .input-panel.active { bottom: 0; }
@@ -298,17 +303,13 @@
 
     <div class="modal-overlay" id="stack-modal" onclick="closeStackModal(event)">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <h3>Размер стека (BB)</h3>
-            <div class="input-with-btn">
-                <input type="number" id="stack-input" placeholder="0">
-                <button onclick="submitStack()">ОК</button>
-            </div>
-            <div class="stack-grid">
-                <button onclick="setStack(0)">0</button><button onclick="setStack(1)">1</button>
-                <button onclick="setStack(2)">2</button><button onclick="setStack(3)">3</button>
-                <button onclick="setStack(4)">4</button><button onclick="setStack(5)">5</button>
-                <button onclick="setStack(6)">6</button><button onclick="setStack(7)">7</button>
-                <button onclick="setStack(8)">8</button><button onclick="setStack(9)">9</button>
+            <h3>Зона стека (BB)</h3>
+            <div class="stack-zones">
+                <button onclick="setZone('0-15')">0 - 15 BB (Push/Fold)</button>
+                <button onclick="setZone('15-25')">15 - 25 BB (Short)</button>
+                <button onclick="setZone('25-40')">25 - 40 BB (Medium)</button>
+                <button onclick="setZone('40-100')">40 - 100 BB (Deep)</button>
+                <button onclick="setZone('100+')">100+ BB (Very Deep)</button>
             </div>
         </div>
     </div>
@@ -380,11 +381,12 @@
         let currentSBSeat = 'p8';
 
         // --- УТИЛИТЫ ---
-        function getStack(seatId) {
-            return parseFloat(document.getElementById(seatId).querySelector('.chip').innerText) || 0;
+        // Теперь мы просто берем текст из фишки (например, "15-25")
+        function getStackText(seatId) {
+            return document.getElementById(seatId).querySelector('.chip').innerText;
         }
-        function setStackVal(seatId, val) {
-            document.getElementById(seatId).querySelector('.chip').innerText = val.toFixed(1).replace('.0', '');
+        function setStackZone(seatId, zoneText) {
+            document.getElementById(seatId).querySelector('.chip').innerText = zoneText;
         }
         function updatePot(amount) {
             pot += amount;
@@ -756,12 +758,11 @@
                 let myBet = playerBets[seatId] || 0;
                 let amountToCall = currentBet - myBet;
                 if (amountToCall > 0) {
-                    let myStack = getStack(seatId);
-                    let pay = Math.min(myStack, amountToCall);
-                    setStackVal(seatId, myStack - pay);
-                    updatePot(pay);
-                    playerBets[seatId] = myBet + pay;
-                    handHistory.push(`${seatId}: Call ${pay}`);
+                    // Если стек в фишке - это текст, мы не можем вычесть число. 
+                    // Но для банка это неважно, мы просто добавляем в банк.
+                    updatePot(amountToCall);
+                    playerBets[seatId] = myBet + amountToCall;
+                    handHistory.push(`${seatId}: Call ${amountToCall}`);
                 } else {
                     handHistory.push(`${seatId}: Check`);
                 }
@@ -785,16 +786,13 @@
             
             applyAutoFold(targetSeatForRaise);
 
-            let raiseAmount = val === 'ALL-IN' ? getStack(targetSeatForRaise) : parseFloat(val);
+            let raiseAmount = val === 'ALL-IN' ? 100 : parseFloat(val); // Условно
             let myBet = playerBets[targetSeatForRaise] || 0;
             let amountToPay = raiseAmount - myBet;
             
             if (amountToPay > 0) {
-                let myStack = getStack(targetSeatForRaise);
-                let pay = Math.min(myStack, amountToPay);
-                setStackVal(targetSeatForRaise, myStack - pay);
-                updatePot(pay);
-                playerBets[targetSeatForRaise] = myBet + pay;
+                updatePot(amountToPay);
+                playerBets[targetSeatForRaise] = myBet + amountToPay;
                 currentBet = Math.max(currentBet, raiseAmount);
                 handHistory.push(`${targetSeatForRaise}: Raise to ${raiseAmount}`);
             }
@@ -804,17 +802,13 @@
 
         function openStackModal(seatId) {
             if(editMode) return; targetSeatForStack = seatId;
-            let seat = document.getElementById(seatId);
-            document.getElementById('stack-input').value = getStack(seatId);
             document.getElementById('stack-modal').classList.add('active');
             document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('active'));
         }
         function closeStackModal(event) { if (event.target.id === 'stack-modal') document.getElementById('stack-modal').classList.remove('active'); }
-        function setStack(num) { let input = document.getElementById('stack-input'); if (input.value === '0' || input.value === '') input.value = num; else input.value += num; }
-        function submitStack() {
-            let val = document.getElementById('stack-input').value;
-            if (!val) return;
-            setStackVal(targetSeatForStack, parseFloat(val));
+        
+        function setZone(zoneText) {
+            setStackZone(targetSeatForStack, zoneText);
             document.getElementById('stack-modal').classList.remove('active');
         }
 
@@ -875,12 +869,9 @@
             updateBBVisual();
 
             if (currentBBSeat && currentSBSeat) {
-                let bbStack = getStack(currentBBSeat);
-                setStackVal(currentBBSeat, bbStack - 1);
+                // Блайнды добавляем в банк, но фишки (диапазоны) не трогаем
                 playerBets[currentBBSeat] = 1;
                 updatePot(1);
-                let sbStack = getStack(currentSBSeat);
-                setStackVal(currentSBSeat, sbStack - 0.5);
                 playerBets[currentSBSeat] = 0.5;
                 updatePot(0.5);
                 currentBet = 1;
@@ -901,7 +892,7 @@
             let stacks = {};
             seatOrder.forEach(id => {
                 if (document.getElementById(id).style.display !== 'none') {
-                    stacks[id] = getStack(id);
+                    stacks[id] = getStackText(id); // Отправляем диапазон, например "15-25"
                 }
             });
 
@@ -916,7 +907,6 @@
                 sbSeat: currentSBSeat
             };
 
-            // Показываем окно с загрузкой
             document.getElementById('advice-action-text').innerText = "АНАЛИЗ...";
             document.getElementById('advice-reason-text').innerText = "Отправка данных на сервер...";
             document.getElementById('advice-modal').classList.add('active');
@@ -943,4 +933,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
