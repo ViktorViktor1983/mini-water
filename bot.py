@@ -2,7 +2,13 @@ import os
 import telebot
 import requests  # Библиотека для HTTP-запросов
 from telebot.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
+import socket
 
+# ПРИНУДИТЕЛЬНОЕ ИСПОЛЬЗОВАНИЕ IPv4 ДЛЯ БОТА
+orig_getaddrinfo = socket.getaddrinfo
+def getaddrinfo_ipv4(host, port, family=0, type=0, proto=0, flags=0):
+    return orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+socket.getaddrinfo = getaddrinfo_ipv4
 # Вставь сюда токен ТВОЕГО бота
 BOT_TOKEN = "9058528898:AAGEWivjXOBfFA_Uvx3-Kf4EtvwlxtiGwwU"
 bot = telebot.TeleBot(BOT_TOKEN)
