@@ -18,7 +18,7 @@ def get_my_position(data):
     active_in_order = [s for s in SEAT_ORDER if s in active_seats]
     
     if 'me' not in active_in_order or bb_seat not in active_in_order:
-        return "btn" # Default fallback
+        return "btn" # Заглушка, если не смогли определить
     
     me_idx = active_in_order.index('me')
     bb_idx = active_in_order.index(bb_seat)
@@ -31,7 +31,9 @@ def get_my_position(data):
     else:
         distance = (btn_idx - me_idx) % len(active_in_order)
         if distance == 1: return "co"
-        elif distance == 2: return "mp" # В чартах может быть lj (lojack) или mp
+        elif distance == 2: return "hj"
+        elif distance == 3: return "lj"
+        elif distance == 4: return "utg1"
         else: return "utg"
 
 def get_stack_bb(data):
@@ -39,51 +41,43 @@ def get_stack_bb(data):
     me_stack = stacks.get('me', '100')
     
     if '-' in str(me_stack):
-        # Например "15-25" -> берем середину 20
         parts = str(me_stack).split('-')
-        try:
-            return int((int(parts[0]) + int(parts[1])) / 2)
+        try: return int((int(parts[0]) + int(parts[1])) / 2)
         except: return 20
     elif '+' in str(me_stack):
-        return 100 # Для 100+ берем 100
+        return 100
     else:
-        try:
-            return int(float(me_stack))
+        try: return int(float(me_stack))
         except: return 100
 
 def find_chart_file(stack_bb, scenario, position):
-    # Ищем ближайшую папку со стеком (доступны 10bb, 11bb... 100bb, 130bb...)
     available_dirs = glob.glob(os.path.join(CHARTS_DIR, '*bb'))
     available_stacks = []
     for d in available_dirs:
-        try:
-            available_stacks.append(int(os.path.basename(d).replace('bb', '')))
+        try: available_stacks.append(int(os.path.basename(d).replace('bb', '')))
         except: pass
     
-    if not available_stacks:
-        return None
+    if not available_stacks: return None
         
     closest_stack = min(available_stacks, key=lambda x: abs(x - stack_bb))
     stack_dir = os.path.join(CHARTS_DIR, f"{closest_stack}bb")
-    
-    # Формируем путь к папке сценария
     scenario_dir = os.path.join(stack_dir, scenario)
-    if not os.path.exists(scenario_dir):
-        return None
+    
+    if not os.path.exists(scenario_dir): return None
         
-    # Ищем файл
-    # Для rfi файлы обычно называются {pos}.json, для vs_rfi - {pos}_vs_rfi_opener.json
+    file_path = None
     if scenario == 'rfi':
-        search_pattern = os.path.join(scenario_dir, position, f"{position}.json")
+        # Для RFI файлы лежат прямо в папке: rfi_utg.json
+        file_path = os.path.join(scenario_dir, f"rfi_{position}.json")
     else:
-        # Берем первый попавшийся файл, так как мы пока не знаем, кто именно сделал рейз
+        # Для vs_rfi файлы лежат в подпапках: vs_rfi/btn/btn_vs_rfi_utg.json
         search_pattern = os.path.join(scenario_dir, position, f"{position}_{scenario}_*.json")
-        
-    files = glob.glob(search_pattern)
-    if not files:
+        files = glob.glob(search_pattern)
+        if files: file_path = files[0]
+
+    if not file_path or not os.path.exists(file_path):
         return None
         
-    file_path = files[0]
     if file_path in charts_cache:
         return charts_cache[file_path]
         
@@ -130,9 +124,8 @@ def get_advice():
     position = get_my_position(data)
     stack_bb = get_stack_bb(data)
     
-    # Определяем сценарий
     if to_call > 0:
-        scenario = "vs_rfi" # Пока упрощаем: если есть ставка, считаем что это защита от рейза
+        scenario = "vs_rfi" 
     else:
         scenario = "rfi"
         
@@ -141,52 +134,37 @@ def get_advice():
     if not chart_data:
         return jsonify({
             "action": "ОШИБКА", 
-            "reason": f"Чарт не найден. Искали: стек ~{stack_bb}bb, сценарий '{scenario}', позиция '{position}'."
+            "reason": f"Файл чарта не найден по пути: {scenario}/{position} для стека {stack_bb}bb."
         })
 
-    # Парсим чарт
-    # В файле структура: {"processed": {"raise": {"50bb": {"AA": 0.5}}, "call": {"50bb": {"AA": 0.5}}}}
-    # Нам нужно найти ключ стека внутри processed.raise и processed.call
     processed = chart_data.get('processed', {})
     raise_data = processed.get('raise', {})
     call_data = processed.get('call', {})
     
-    # Ищем нужный ключ стека (например "50bb" или "27.3bb")
-    raise_freq = 0.0
-    call_freq = 0.0
-    
-    for stack_key in raise_data:
-        if hand_str in raise_data[stack_key]:
-            raise_freq = raise_data[stack_key][hand_str]
-            break
-            
-    for stack_key in call_data:
-        if hand_str in call_data[stack_key]:
-            call_freq = call_data[stack_key][hand_str]
-            break
+    def get_freq(data_dict, hand):
+        # Проверяем плоскую структуру {"AA": 0.5}
+        if hand in data_dict and isinstance(data_dict[hand], (int, float)):
+            return data_dict[hand]
+        # Проверяем вложенную {"50bb": {"AA": 0.5}}
+        for k, v in data_dict.items():
+            if isinstance(v, dict) and hand in v:
+                return v[hand]
+        return 0.0
 
-    # Принимаем решение на основе частот
+    raise_freq = get_freq(raise_data, hand_str)
+    call_freq = get_freq(call_data, hand_str)
+
     if raise_freq > 0.5:
-        return jsonify({
-            "action": "RAISE",
-            "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. У вас {hand_str}. GTO-чарт рекомендует рейз (частота {raise_freq*100:.0f}%)."
-        })
+        return jsonify({"action": "RAISE", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. У вас {hand_str}. GTO-чарт рекомендует рейз ({raise_freq*100:.0f}%)."})
     elif call_freq > 0.5:
-        return jsonify({
-            "action": "CALL",
-            "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. У вас {hand_str}. GTO-чарт рекомендует колл (частота {call_freq*100:.0f}%)."
-        })
+        return jsonify({"action": "CALL", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. У вас {hand_str}. GTO-чарт рекомендует колл ({call_freq*100:.0f}%)."})
     elif raise_freq > 0.1 or call_freq > 0.1:
-        # Если частоты смешанные, даем более вероятное
         if raise_freq > call_freq:
-             return jsonify({"action": "RAISE", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Рука {hand_str} играется смешанно, но рейз чаще ({raise_freq*100:.0f}%)."})
+             return jsonify({"action": "RAISE", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Рука {hand_str} играется смешанно, рейз чаще ({raise_freq*100:.0f}%)."})
         else:
-             return jsonify({"action": "CALL", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Рука {hand_str} играется смешанно, но колл чаще ({call_freq*100:.0f}%)."})
+             return jsonify({"action": "CALL", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Рука {hand_str} играется смешанно, колл чаще ({call_freq*100:.0f}%)."})
     else:
-        return jsonify({
-            "action": "FOLD",
-            "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Руки {hand_str} нет в диапазоне. GTO-чарт рекомендует фолд."
-        })
+        return jsonify({"action": "FOLD", "reason": f"Позиция: {position.upper()}. Стек: {stack_bb}bb. Руки {hand_str} нет в диапазоне. GTO-чарт рекомендует фолд."})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8091)
