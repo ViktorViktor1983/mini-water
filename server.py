@@ -18,7 +18,7 @@ def get_my_position(data):
     active_in_order = [s for s in SEAT_ORDER if s in active_seats]
     
     if 'me' not in active_in_order or bb_seat not in active_in_order:
-        return "btn" # Заглушка, если не смогли определить
+        return "btn" 
     
     me_idx = active_in_order.index('me')
     bb_idx = active_in_order.index(bb_seat)
@@ -67,11 +67,10 @@ def find_chart_file(stack_bb, scenario, position):
         
     file_path = None
     if scenario == 'rfi':
-        # Для RFI файлы лежат прямо в папке: rfi_utg.json
         file_path = os.path.join(scenario_dir, f"rfi_{position}.json")
     else:
-        # Для vs_rfi файлы лежат в подпапках: vs_rfi/btn/btn_vs_rfi_utg.json
-        search_pattern = os.path.join(scenario_dir, position, f"{position}_{scenario}_*.json")
+        # Ищем файл, который начинается с нашей позиции во всех папках (например btn_vs_co.json)
+        search_pattern = os.path.join(scenario_dir, '*', f"{position}_vs_*.json")
         files = glob.glob(search_pattern)
         if files: file_path = files[0]
 
@@ -142,10 +141,8 @@ def get_advice():
     call_data = processed.get('call', {})
     
     def get_freq(data_dict, hand):
-        # Проверяем плоскую структуру {"AA": 0.5}
         if hand in data_dict and isinstance(data_dict[hand], (int, float)):
             return data_dict[hand]
-        # Проверяем вложенную {"50bb": {"AA": 0.5}}
         for k, v in data_dict.items():
             if isinstance(v, dict) and hand in v:
                 return v[hand]
